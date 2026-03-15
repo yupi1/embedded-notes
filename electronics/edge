@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Фронт сигналу · Конспект · Embedded Systems</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-base:      #0d0f10;
+      --bg-surface:   #141618;
+      --bg-elevated:  #1a1d20;
+      --bg-overlay:   #21252a;
+
+      --border-dim:    rgba(255,255,255,0.06);
+      --border-mid:    rgba(255,255,255,0.12);
+      --border-bright: rgba(255,255,255,0.22);
+
+      --text-primary:   #e8e6e0;
+      --text-secondary: #8b897e;
+      --text-muted:     #52504a;
+      --text-inverse:   #0d0f10;
+
+      --accent:      #00d084;
+      --accent-dim:  rgba(0,208,132,0.12);
+      --accent-mid:  rgba(0,208,132,0.25);
+      --accent-glow: rgba(0,208,132,0.06);
+
+      --rising:  #00d084;
+      --falling: #ff6b4a;
+      --clk:     #4a9eff;
+      --warning: #f5c842;
+      --danger:  #ff4a4a;
+
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+
+      --r-sm: 4px;  --r-md: 6px;  --r-lg: 10px;  --r-xl: 14px;
+
+      --text-xs:  11px;  --text-sm:  12px;  --text-base: 14px;
+      --text-md:  15px;  --text-lg:  17px;  --text-xl:   20px;
+      --text-2xl: 24px;  --text-3xl: 30px;  --text-4xl:  38px;
+
+      --glow-accent: 0 0 20px rgba(0,208,132,0.15);
+
+      /* Фронти сигналу → категорія MCU → falling (помаранчевий) */
+      --topic-color: var(--falling);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .ic {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-dim);
+      padding: 2px 6px;
+      border-radius: var(--r-sm);
+      color: var(--accent);
+    }
+
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 3px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+    .badge::before { content: ''; display: block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .badge-pill    { border-radius: 100px; }
+    .badge-rising  { background: rgba(0,208,132,0.12);  color: var(--rising);  border: 1px solid rgba(0,208,132,0.25); }
+    .badge-falling { background: rgba(255,107,74,0.12); color: var(--falling); border: 1px solid rgba(255,107,74,0.25); }
+    .badge-clk     { background: rgba(74,158,255,0.12); color: var(--clk);     border: 1px solid rgba(74,158,255,0.25); }
+    .badge-warning { background: rgba(245,200,66,0.12); color: var(--warning); border: 1px solid rgba(245,200,66,0.25); }
+    .badge-neutral { background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border-dim); }
+
+    .callout { border-radius: var(--r-lg); padding: 14px 16px; display: flex; gap: 12px; font-size: var(--text-base); line-height: 1.6; }
+    .callout-icon { font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 3px 6px; border-radius: 3px; flex-shrink: 0; margin-top: 1px; }
+    .callout-info      { background: rgba(74,158,255,0.07);  border: 1px solid rgba(74,158,255,0.18);  color: var(--text-secondary); }
+    .callout-info      .callout-icon { background: rgba(74,158,255,0.2); color: var(--clk); }
+    .callout-warning   { background: rgba(245,200,66,0.07);  border: 1px solid rgba(245,200,66,0.18);  color: var(--text-secondary); }
+    .callout-warning   .callout-icon { background: rgba(245,200,66,0.2); color: var(--warning); }
+    .callout-important { background: rgba(0,208,132,0.05);   border: 1px solid rgba(0,208,132,0.15);   color: var(--text-secondary); }
+    .callout-important .callout-icon { background: var(--accent-dim); color: var(--accent); }
+    .callout-danger    { background: rgba(255,74,74,0.07);   border: 1px solid rgba(255,74,74,0.18);   color: var(--text-secondary); }
+    .callout-danger    .callout-icon { background: rgba(255,74,74,0.2); color: var(--danger); }
+    .callout strong { color: var(--text-primary); }
+
+    .code-block { background: var(--bg-surface); border: 1px solid var(--border-dim); border-radius: var(--r-lg); overflow: hidden; font-family: var(--font-mono); font-size: var(--text-sm); }
+    .code-block-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border-dim); background: var(--bg-elevated); }
+    .code-block-lang   { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+    .code-block-copy   { font-size: 10px; color: var(--text-muted); cursor: pointer; background: none; border: none; font-family: var(--font-mono); padding: 0; transition: color 0.15s; }
+    .code-block-copy:hover { color: var(--accent); }
+    .code-block-body   { padding: 16px; line-height: 1.65; overflow-x: auto; color: var(--text-primary); }
+    .code-block-body .kw  { color: var(--clk); }
+    .code-block-body .fn  { color: var(--accent); }
+    .code-block-body .str { color: var(--warning); }
+    .code-block-body .cm  { color: var(--text-muted); font-style: italic; }
+    .code-block-body .num { color: var(--falling); }
+    .code-block-body .reg { color: var(--warning); }
+
+    .table-wrap { background: var(--bg-surface); border: 1px solid var(--border-dim); border-radius: var(--r-xl); overflow: hidden; }
+    .kit-table  { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+    .kit-table thead tr { border-bottom: 1px solid var(--border-mid); }
+    .kit-table th  { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); padding: 12px 16px; text-align: left; font-weight: 500; }
+    .kit-table td  { padding: 11px 16px; color: var(--text-secondary); border-bottom: 1px solid var(--border-dim); vertical-align: middle; }
+    .kit-table tr:last-child td { border-bottom: none; }
+    .kit-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .kit-table .mono   { font-family: var(--font-mono); color: var(--text-primary); }
+    .kit-table .accent { color: var(--accent); font-family: var(--font-mono); }
+    .kit-table .falling { color: var(--falling); font-family: var(--font-mono); }
+    .kit-table .clk-c   { color: var(--clk); font-family: var(--font-mono); }
+    .kit-table .warn-c  { color: var(--warning); font-family: var(--font-mono); }
+
+    .stat-card  { background: var(--bg-elevated); border: 1px solid var(--border-dim); border-radius: var(--r-lg); padding: 18px 20px; }
+    .stat-label { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .stat-value { font-family: var(--font-mono); font-size: var(--text-2xl); font-weight: 500; color: var(--text-primary); }
+    .stat-unit  { font-size: var(--text-sm); color: var(--text-muted); margin-left: 4px; }
+    .stat-sub   { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); margin-top: 4px; }
+
+    .accordion { border: 1px solid var(--border-dim); border-radius: var(--r-xl); overflow: hidden; background: var(--bg-surface); }
+    .accordion-item { border-bottom: 1px solid var(--border-dim); }
+    .accordion-item:last-child { border-bottom: none; }
+    .accordion-trigger { width: 100%; background: none; border: none; padding: 18px 20px; text-align: left; cursor: pointer; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; transition: background 0.15s; color: var(--text-primary); font-size: var(--text-base); font-family: var(--font-sans); }
+    .accordion-trigger:hover { background: var(--border-dim); }
+    .accordion-trigger.open  { background: var(--accent-glow); }
+    .accordion-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-mid); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-secondary); transition: transform 0.25s, border-color 0.2s, color 0.2s; margin-top: 2px; }
+    .accordion-trigger.open .accordion-icon { transform: rotate(45deg); border-color: var(--accent); color: var(--accent); }
+    .accordion-body { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; background: var(--accent-glow); }
+    .accordion-body.open { max-height: 800px; }
+    .accordion-content { padding: 4px 20px 20px; color: var(--text-secondary); font-size: var(--text-base); line-height: 1.7; border-top: 1px solid var(--border-dim); }
+    .accordion-content strong { color: var(--text-primary); font-weight: 500; }
+    .accordion-content p { margin-top: 10px; }
+    .accordion-content p:first-child { margin-top: 0; }
+
+    .waveform-demo   { background: var(--bg-surface); border: 1px solid var(--border-dim); border-radius: var(--r-xl); overflow: hidden; }
+    .waveform-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border-dim); background: var(--bg-elevated); }
+    .waveform-title  { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .waveform-body   { padding: 16px; }
+    .waveform-svg    { display: block; width: 100%; }
+
+    /* canvas waveform */
+    .waveform-canvas-wrap { position: relative; }
+    .waveform-canvas-wrap canvas { display: block; width: 100%; }
+
+    /* controls */
+    .wave-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 16px; border-top: 1px solid var(--border-dim); background: var(--bg-elevated); }
+    .wave-btn { background: none; border: 1px solid var(--border-mid); color: var(--text-secondary); font-family: var(--font-mono); font-size: 10px; padding: 5px 12px; border-radius: var(--r-md); cursor: pointer; transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.08em; }
+    .wave-btn:hover { border-color: var(--topic-color); color: var(--topic-color); }
+    .wave-btn.active { border-color: var(--topic-color); color: var(--topic-color); background: rgba(255,107,74,0.08); }
+    .wave-slider-wrap { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+    input[type=range] { -webkit-appearance: none; width: 100px; height: 3px; background: var(--border-mid); border-radius: 2px; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--topic-color); cursor: pointer; }
+    #slopeVal { color: var(--topic-color); min-width: 32px; }
+
+    /* topic lists */
+    .topic-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .topic-list li { display: flex; gap: 10px; font-size: var(--text-base); color: var(--text-secondary); line-height: 1.6; }
+    .topic-list li::before { content: '—'; color: var(--topic-color); flex-shrink: 0; font-family: var(--font-mono); }
+    .topic-list li strong { color: var(--text-primary); }
+
+    .steps-list { list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: steps; }
+    .steps-list li { display: flex; gap: 12px; font-size: var(--text-base); color: var(--text-secondary); line-height: 1.6; counter-increment: steps; }
+    .steps-list li::before { content: counter(steps); flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bg-elevated); border: 1px solid var(--border-mid); font-family: var(--font-mono); font-size: 10px; color: var(--topic-color); display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+    .steps-list li strong { color: var(--text-primary); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+    /* page structure */
+    .page-top-line { height: 2px; background: linear-gradient(90deg, var(--topic-color) 0%, transparent 60%); }
+    .page-wrap { max-width: 820px; margin: 0 auto; padding: 56px 40px 120px; }
+    .page-header { border-bottom: 1px solid var(--border-dim); padding-bottom: 48px; margin-bottom: 56px; }
+    .page-eyebrow { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .page-eyebrow::before { content: '//'; color: var(--topic-color); font-size: 12px; }
+    .page-title { font-size: clamp(32px, 5vw, 50px); font-weight: 300; color: var(--text-primary); line-height: 1.1; margin-bottom: 16px; }
+    .page-title-accent { color: var(--topic-color); }
+    .page-desc { font-size: var(--text-lg); color: var(--text-secondary); max-width: 560px; line-height: 1.65; margin-bottom: 20px; }
+    .page-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .section-header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; margin-top: 56px; }
+    .section-num  { font-family: var(--font-mono); font-size: 11px; color: var(--topic-color); opacity: 0.7; min-width: 28px; }
+    .section-name { font-size: var(--text-xl); font-weight: 400; color: var(--text-primary); }
+    .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-muted); text-decoration: none; transition: color 0.15s; margin-bottom: 32px; }
+    .back-link:hover { color: var(--accent); }
+    .page-footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border-dim); font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.14em; }
+    .mt-4  { margin-top: 16px; }
+    .mt-6  { margin-top: 24px; }
+    .mt-8  { margin-top: 32px; }
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+    .divider { height: 1px; background: var(--border-dim); margin: 40px 0; }
+
+    /* tooltip */
+    #wave-tooltip { position: fixed; background: var(--bg-overlay); border: 1px solid var(--border-mid); border-radius: var(--r-md); padding: 8px 12px; font-family: var(--font-mono); font-size: 11px; pointer-events: none; opacity: 0; transition: opacity 0.1s; z-index: 100; line-height: 1.6; }
+
+    @media (max-width: 600px) {
+      .page-wrap { padding: 32px 20px 80px; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="wave-tooltip"></div>
+<div class="page-top-line"></div>
+
+<div class="page-wrap">
+
+  <a class="back-link" href="../index.html">← повернутись до конспекту</a>
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div class="page-eyebrow">Конспект · Electronics</div>
+    <h1 class="page-title">
+      Фронт <span class="page-title-accent">сигналу</span>
+    </h1>
+    <p class="page-desc">
+      Наростаючий та спадаючий фронт — фундаментальна концепція цифрової електроніки.
+      Визначає як MCU читає дані, коли спрацьовують переривання та чому
+      реєстр <code class="ic">GPIOx_OSPEEDR</code> впливає на надійність схеми.
+    </p>
+    <div class="page-tags">
+      <span class="badge badge-rising badge-pill">learnt</span>
+      <span class="badge badge-neutral badge-pill">STM32</span>
+      <span class="badge badge-neutral badge-pill">ESP32</span>
+      <span class="badge badge-neutral badge-pill">Electronics</span>
+    </div>
+  </header>
+
+
+  <!-- 01 — КЛЮЧОВІ ПАРАМЕТРИ -->
+  <div class="section-header">
+    <span class="section-num">01 —</span>
+    <span class="section-name">Ключові параметри</span>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Rise Time (tᵣ)</div>
+      <div class="stat-value">10<span class="stat-unit">→ 90%</span></div>
+      <div class="stat-sub">Vcc, стандарт IEEE</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fall Time (tᶠ)</div>
+      <div class="stat-value">90<span class="stat-unit">→ 10%</span></div>
+      <div class="stat-sub">Vcc, стандарт IEEE</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">GPIO VERY_HIGH</div>
+      <div class="stat-value">100<span class="stat-unit">МГц</span></div>
+      <div class="stat-sub">STM32 max slew rate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">I²C pull-up typ.</div>
+      <div class="stat-value">4.7<span class="stat-unit">кОм</span></div>
+      <div class="stat-sub">τ = R·C ≈ 47 нс</div>
+    </div>
+  </div>
+
+
+  <!-- 02 — ЩО ЦЕ ТАКЕ -->
+  <div class="section-header">
+    <span class="section-num">02 —</span>
+    <span class="section-name">Що це таке</span>
+  </div>
+
+  <p style="font-size:var(--text-md); color:var(--text-primary); line-height:1.75;">
+    <strong>Фронт сигналу</strong> — перехідний процес зміни цифрового сигналу між рівнями LOW та HIGH.
+    На відміну від ідеального прямокутного імпульсу, реальний фронт займає час:
+    <code class="ic">tᵣ</code> — наростаючий, <code class="ic">tᶠ</code> — спадаючий.
+    Крутизна фронту визначається параметром <strong>Slew Rate</strong> = dV/dt [В/нс].
+  </p>
+
+  <div class="mt-8">
+    <div class="callout callout-important">
+      <span class="callout-icon">KEY</span>
+      <div><strong>Ключова ідея:</strong> реальний фронт — не стрибок, а перехідний процес.
+      Занадто повільний → помилкові спрацювання EXTI; занадто швидкий → EMI-шум і ringing на лінії.</div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="callout callout-info">
+      <span class="callout-icon">INF</span>
+      <div>Вимірювання tᵣ і tᶠ завжди проводяться між рівнями <strong>10% і 90%</strong> від Vcc — це промисловий
+      стандарт IEEE. Крайні точки (0% і 100%) асимптотично наближаються до рівня і їх важко точно
+      зафіксувати на осцилографі.</div>
+    </div>
+  </div>
+
+
+  <!-- 03 — ІНТЕРАКТИВНА ОСЦИЛОГРАМА -->
+  <div class="section-header">
+    <span class="section-num">03 —</span>
+    <span class="section-name">Інтерактивна осцилограма</span>
+  </div>
+
+  <div class="waveform-demo">
+    <div class="waveform-header">
+      <span class="waveform-title">Waveform Viewer — CLK / DATA / TRIGGER</span>
+      <div style="display:flex;gap:8px">
+        <span class="badge badge-clk badge-pill" style="font-size:9px">CLK</span>
+        <span class="badge badge-rising badge-pill" style="font-size:9px">DATA</span>
+        <span class="badge badge-falling badge-pill" style="font-size:9px">TRIGGER</span>
+      </div>
+    </div>
+    <div class="waveform-body waveform-canvas-wrap" style="padding:0;">
+      <canvas id="waveCanvas" height="240" style="display:block;width:100%;background:#0d0f10;"></canvas>
+    </div>
+    <div class="wave-controls">
+      <button class="wave-btn active" id="btnPlay">▶ play</button>
+      <button class="wave-btn" id="btnPause">⏸ pause</button>
+      <button class="wave-btn" id="btnReset">↺ reset</button>
+      <div class="wave-slider-wrap">
+        <span>Slew Rate</span>
+        <input type="range" id="slopeSlider" min="1" max="20" value="6">
+        <span id="slopeVal">6 нс</span>
+      </div>
+    </div>
+  </div>
+  <p style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-align:center;margin-top:8px;">
+    Cyan | вертикальні лінії = наростаючі фронти CLK (POSEDGE). Наведи курсор → рівень та час.
+  </p>
+
+
+  <!-- 04 — TIMING DIAGRAM -->
+  <div class="section-header">
+    <span class="section-num">04 —</span>
+    <span class="section-name">Timing Diagram — tᵣ і tᶠ</span>
+  </div>
+
+  <div class="waveform-demo">
+    <div class="waveform-header">
+      <span class="waveform-title">Rise Time / Fall Time — вимірювання 10%↔90%</span>
+      <div style="display:flex;gap:8px">
+        <span class="badge badge-rising badge-pill" style="font-size:9px">tᵣ</span>
+        <span class="badge badge-falling badge-pill" style="font-size:9px">tᶠ</span>
+      </div>
+    </div>
+    <div class="waveform-body" style="padding:0;">
+      <canvas id="timingCanvas" height="180" style="display:block;width:100%;background:#0d0f10;"></canvas>
+    </div>
+  </div>
+
+
+  <!-- 05 — ТАБЛИЦЯ ПАРАМЕТРІВ -->
+  <div class="section-header">
+    <span class="section-num">05 —</span>
+    <span class="section-name">Параметри та реєстри</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="kit-table">
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>Позначення</th>
+          <th>Опис</th>
+          <th>Тип</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">Rise Time</td>
+          <td class="accent">tᵣ</td>
+          <td>Час наростання від 10% до 90% Vcc</td>
+          <td><span class="badge badge-rising" style="font-size:9px">RISING</span></td>
+        </tr>
+        <tr>
+          <td class="mono">Fall Time</td>
+          <td class="falling">tᶠ</td>
+          <td>Час спадання від 90% до 10% Vcc</td>
+          <td><span class="badge badge-falling" style="font-size:9px">FALLING</span></td>
+        </tr>
+        <tr>
+          <td class="mono">Propagation Delay</td>
+          <td class="clk-c">tₚd</td>
+          <td>Затримка від фронту CLK до зміни виходу</td>
+          <td><span class="badge badge-clk" style="font-size:9px">BOTH</span></td>
+        </tr>
+        <tr>
+          <td class="mono">Setup Time</td>
+          <td class="warn-c">tsu</td>
+          <td>Дані стабільні ДО активного фронту CLK</td>
+          <td><span class="badge badge-rising" style="font-size:9px">RISING</span></td>
+        </tr>
+        <tr>
+          <td class="mono">Hold Time</td>
+          <td class="warn-c">th</td>
+          <td>Дані стабільні ПІСЛЯ активного фронту CLK</td>
+          <td><span class="badge badge-rising" style="font-size:9px">RISING</span></td>
+        </tr>
+        <tr>
+          <td class="mono">Slew Rate</td>
+          <td class="mono" style="color:var(--text-secondary)">SR</td>
+          <td>Швидкість зміни напруги: dV/dt [В/нс]</td>
+          <td><span class="badge badge-clk" style="font-size:9px">BOTH</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4">
+    <div class="table-wrap">
+      <table class="kit-table">
+        <thead>
+          <tr>
+            <th>GPIOx_OSPEEDR</th>
+            <th>Bits</th>
+            <th>Макс. частота</th>
+            <th>Використання</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>LOW speed</td>    <td class="mono accent">00</td><td>~2 МГц</td>  <td>Загальний GPIO, LED</td></tr>
+          <tr><td>MEDIUM speed</td> <td class="mono accent">01</td><td>~25 МГц</td> <td>UART, I²C</td></tr>
+          <tr><td>HIGH speed</td>   <td class="mono accent">10</td><td>~50 МГц</td> <td>SPI, SDIO</td></tr>
+          <tr><td>VERY HIGH</td>    <td class="mono accent">11</td><td>~100 МГц</td><td>USB, Ethernet, FMC</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-4 callout callout-warning">
+    <span class="callout-icon">WRN</span>
+    <div><strong>Open-Drain і OSPEEDR:</strong> якщо виставити <code class="ic">VERY_HIGH</code> на лінії
+    I²C (open-drain) — нічого не зміниться. Pull-up резистор все одно обмежує наростаючий фронт
+    за законом <code class="ic">τ = R·C</code>. OSPEEDR впливає тільки на <em>спадаючий</em> (активний) фронт.</div>
+  </div>
+
+
+  <!-- 06 — ДЖЕРЕЛА ФРОНТІВ -->
+  <div class="section-header">
+    <span class="section-num">06 —</span>
+    <span class="section-name">Хто генерує фронти</span>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div style="background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--rising);margin-bottom:12px;">Push-Pull</div>
+      <ul class="topic-list">
+        <li><strong>P-МОП</strong> активно тягне до Vcc → наростаючий фронт</li>
+        <li><strong>N-МОП</strong> активно тягне до GND → спадаючий фронт</li>
+        <li>Обидва напрямки <strong>активні</strong> — фронти швидкі та симетричні</li>
+        <li>SPI до 40+ МГц завдяки push-pull</li>
+      </ul>
+    </div>
+    <div style="background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--falling);margin-bottom:12px;">Open-Drain</div>
+      <ul class="topic-list">
+        <li><strong>N-МОП</strong> активно тягне до GND → спадаючий швидкий</li>
+        <li>Підйом — пасивно через <strong>pull-up резистор</strong></li>
+        <li>Швидкість наростання залежить від <code class="ic">R·C</code></li>
+        <li>I²C, 1-Wire, wired-AND шини</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="kit-table">
+      <thead>
+        <tr><th>Джерело</th><th>Генерує</th><th>Деталь</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>PLL / HSE / HSI</strong></td><td>CLK фронти</td><td>Основний генератор тактових фронтів у МК</td></tr>
+        <tr><td class="mono">Timer PWM</td><td>RISING + FALLING</td><td>Апаратно по рахунку <code class="ic">ARR</code> / <code class="ic">CCR</code></td></tr>
+        <tr><td class="mono">UART TX</td><td>FALLING (старт-біт)</td><td>Лінія завжди HIGH у спокої, старт = HIGH→LOW</td></tr>
+        <tr><td class="mono">SPI SCK (CPOL=0)</td><td>RISING (перший)</td><td>CLK у спокої LOW → перший фронт наростаючий</td></tr>
+        <tr><td class="mono">I²C SCL</td><td>RISING (через R)</td><td>Open-drain, підйом через pull-up 4.7 кОм</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- 07 — EXTI ТА ПЕРЕРИВАННЯ -->
+  <div class="section-header">
+    <span class="section-num">07 —</span>
+    <span class="section-name">EXTI — переривання по фронту</span>
+  </div>
+
+  <div class="grid-2">
+    <div style="background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--clk);margin-bottom:12px;">STM32 — EXTI</div>
+      <ul class="topic-list">
+        <li><code class="ic">EXTI_RTSR</code> — Rising Trigger Select</li>
+        <li><code class="ic">EXTI_FTSR</code> — Falling Trigger Select</li>
+        <li>Обидва одночасно → тригер по будь-якому фронту</li>
+        <li>HAL: <code class="ic">GPIO_MODE_IT_RISING</code></li>
+        <li>Лінії EXTI0..15 відповідають пінам PA0..PX15</li>
+      </ul>
+    </div>
+    <div style="background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);padding:20px;">
+      <div style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--clk);margin-bottom:12px;">ESP32 — GPIO ISR</div>
+      <ul class="topic-list">
+        <li><code class="ic">GPIO_INTR_POSEDGE</code> — наростаючий</li>
+        <li><code class="ic">GPIO_INTR_NEGEDGE</code> — спадаючий</li>
+        <li><code class="ic">GPIO_INTR_ANYEDGE</code> — будь-який</li>
+        <li><code class="ic">gpio_isr_handler_add()</code> — реєстрація ISR</li>
+        <li>Дебаунс: RC-фільтр або FreeRTOS таймер</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="mt-4 callout callout-info">
+    <span class="callout-icon">INF</span>
+    <div><strong>ANYEDGE для енкодера:</strong> при <code class="ic">GPIO_INTR_ANYEDGE</code> переривання
+    спрацьовує двічі на період — по RISING і по FALLING. Це корисно для
+    квадратурного енкодера (подвоєна роздільна здатність) і вимірювання duty cycle.</div>
+  </div>
+
+
+  <!-- 08 — КОД -->
+  <div class="section-header">
+    <span class="section-num">08 —</span>
+    <span class="section-name">Код</span>
+  </div>
+
+  <p style="color:var(--text-secondary);font-size:var(--text-base);margin-bottom:16px;">
+    Налаштування GPIO на переривання по наростаючому фронту + обробник на STM32 HAL.
+  </p>
+
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="code-block-lang">C · STM32 HAL</span>
+      <button class="code-block-copy">copy</button>
+    </div>
+    <pre class="code-block-body"><span class="cm">// 1. Налаштування в CubeMX або вручну в MX_GPIO_Init()</span>
+<span class="kw">GPIO_InitTypeDef</span> GPIO_InitStruct = {<span class="num">0</span>};
+
+<span class="fn">__HAL_RCC_GPIOA_CLK_ENABLE</span>();
+
+GPIO_InitStruct.<span class="reg">Pin</span>   = <span class="reg">GPIO_PIN_0</span>;
+GPIO_InitStruct.<span class="reg">Mode</span>  = <span class="reg">GPIO_MODE_IT_RISING</span>;  <span class="cm">// тригер по RISING</span>
+GPIO_InitStruct.<span class="reg">Pull</span>  = <span class="reg">GPIO_PULLDOWN</span>;          <span class="cm">// лінія у спокої LOW</span>
+GPIO_InitStruct.<span class="reg">Speed</span> = <span class="reg">GPIO_SPEED_FREQ_LOW</span>;   <span class="cm">// slew rate не критичний</span>
+<span class="fn">HAL_GPIO_Init</span>(<span class="reg">GPIOA</span>, &GPIO_InitStruct);
+
+<span class="cm">// 2. Увімкнути переривання у NVIC</span>
+<span class="fn">HAL_NVIC_SetPriority</span>(<span class="reg">EXTI0_IRQn</span>, <span class="num">2</span>, <span class="num">0</span>);
+<span class="fn">HAL_NVIC_EnableIRQ</span>(<span class="reg">EXTI0_IRQn</span>);
+
+<span class="cm">// 3. Callback — викликається автоматично з EXTI IRQ Handler</span>
+<span class="kw">void</span> <span class="fn">HAL_GPIO_EXTI_Callback</span>(<span class="kw">uint16_t</span> GPIO_Pin) {
+    <span class="kw">if</span> (GPIO_Pin == <span class="reg">GPIO_PIN_0</span>) {
+        <span class="cm">// обробка наростаючого фронту</span>
+        rising_edge_count++;
+    }
+}</pre>
+  </div>
+
+  <div class="code-block mt-4">
+    <div class="code-block-header">
+      <span class="code-block-lang">C · ESP-IDF v5.x</span>
+      <button class="code-block-copy">copy</button>
+    </div>
+    <pre class="code-block-body"><span class="cm">// Налаштування GPIO переривання по будь-якому фронту</span>
+<span class="kw">static void</span> <span class="fn">IRAM_ATTR</span> gpio_isr_handler(<span class="kw">void</span>* arg) {
+    <span class="kw">uint32_t</span> gpio_num = (<span class="kw">uint32_t</span>) arg;
+    <span class="fn">xQueueSendFromISR</span>(gpio_evt_queue, &gpio_num, <span class="num">NULL</span>);
+}
+
+<span class="kw">void</span> <span class="fn">app_main</span>(<span class="kw">void</span>) {
+    <span class="kw">gpio_config_t</span> io_conf = {
+        .<span class="reg">pin_bit_mask</span> = (<span class="num">1ULL</span> << <span class="num">GPIO_NUM_4</span>),
+        .<span class="reg">mode</span>         = <span class="reg">GPIO_MODE_INPUT</span>,
+        .<span class="reg">pull_up_en</span>   = <span class="reg">GPIO_PULLUP_ENABLE</span>,
+        .<span class="reg">intr_type</span>    = <span class="reg">GPIO_INTR_ANYEDGE</span>,  <span class="cm">// RISING + FALLING</span>
+    };
+    <span class="fn">gpio_config</span>(&io_conf);
+
+    gpio_evt_queue = <span class="fn">xQueueCreate</span>(<span class="num">10</span>, <span class="kw">sizeof</span>(<span class="kw">uint32_t</span>));
+    <span class="fn">gpio_install_isr_service</span>(<span class="num">0</span>);
+    <span class="fn">gpio_isr_handler_add</span>(<span class="num">GPIO_NUM_4</span>, gpio_isr_handler, (<span class="kw">void</span>*)<span class="num">GPIO_NUM_4</span>);
+}</pre>
+  </div>
+
+
+  <!-- 09 — НА ЩО ЗВЕРНУТИ УВАГУ -->
+  <div class="section-header">
+    <span class="section-num">09 —</span>
+    <span class="section-name">На що звернути увагу</span>
+  </div>
+
+  <div class="stack">
+    <div class="callout callout-warning">
+      <span class="callout-icon">WRN</span>
+      <div><strong>Дребезг контактів (Bounce):</strong> механічна кнопка генерує 5–50 переходів
+      за 5–20 мс. EXTI зафіксує кожен як окремий фронт. Рішення: RC-фільтр (10 кОм + 100 нФ)
+      або програмна затримка 20 мс після першого фронту.</div>
+    </div>
+    <div class="callout callout-warning">
+      <span class="callout-icon">WRN</span>
+      <div><strong>Ringing після фронту:</strong> крутий фронт створює LC-резонанс між
+      індуктивністю доріжки і паразитною ємністю → коливання. На осцилографі: "хвилі" після
+      фронту. Може викликати подвійне спрацювання EXTI. Рішення: послідовний резистор
+      <strong>22–100 Ом</strong> на виході GPIO.</div>
+    </div>
+    <div class="callout callout-danger">
+      <span class="callout-icon">ERR</span>
+      <div><strong>Порушення Setup/Hold Time:</strong> якщо дані не встигли стабілізуватися
+      до або після фронту CLK — flip-flop переходить у стан metastability. Вихід зависає
+      між 0 і 1 на непередбачений час. Результат: рандомні збої що неможливо відтворити.</div>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">INF</span>
+      <div><strong>EMI та slew rate:</strong> крутий фронт = широкий спектр гармонік (ряд Фур'є).
+      Правило: використовуй мінімальний <code class="ic">OSPEEDR</code> що задовольняє вимоги протоколу.
+      Для I²C — <code class="ic">LOW</code>, для SPI 10 МГц — <code class="ic">MEDIUM</code>,
+      для USB — <code class="ic">VERY_HIGH</code>.</div>
+    </div>
+  </div>
+
+
+  <!-- 10 — ПИТАННЯ НА СПІВБЕСІДІ -->
+  <div class="section-header">
+    <span class="section-num">10 —</span>
+    <span class="section-name">Питання на співбесіді</span>
+  </div>
+
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Чим відрізняється наростаючий фронт від спадаючого? Як їх правильно виміряти?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <strong>Rising Edge</strong> — перехід LOW→HIGH, <strong>Falling Edge</strong> — HIGH→LOW.
+          <p class="mt-6">Вимірюються між рівнями <code class="ic">10%</code> і <code class="ic">90%</code> від Vcc:
+          <code class="ic">tᵣ</code> = час від 10% до 90%, <code class="ic">tᶠ</code> = час від 90% до 10%.</p>
+          <p class="mt-6">Чому не від 0 до 100%? Краї кривої асимптотично наближаються до рівня —
+          їх практично неможливо точно зафіксувати. Діапазон 10–90% є промисловим стандартом IEEE 
+          і відтворюється на будь-якому осцилографі.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Чому у I²C фронти повільніші ніж у SPI? Як тип GPIO виходу впливає на фронт?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          I²C використовує <strong>open-drain</strong>: спадаючий фронт — активний (N-МОП тягне до GND),
+          наростаючий — пасивний через pull-up резистор.
+          <p class="mt-6">Швидкість наростання визначається RC-константою: <code class="ic">τ = R · C</code>.
+          При 4.7 кОм і 10 пФ: τ ≈ 47 нс. З довшими проводами (більша ємність) — ще повільніше.
+          Звідси обмеження I²C ~3.4 МГц у Fast Mode Plus.</p>
+          <p class="mt-6">SPI — <strong>push-pull</strong>: обидва напрямки активні. Транзистори
+          заряджають і розряджають лінію агресивно → фронти в 10–50 разів крутіші → SPI легко
+          досягає 40+ МГц.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Що таке Setup Time і Hold Time? Що трапиться при їх порушенні?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <strong>Setup Time (tsu)</strong> — мінімальний час, протягом якого дані мають бути стабільними
+          <em>до</em> активного фронту CLK. <strong>Hold Time (th)</strong> — мінімальний час
+          стабільності даних <em>після</em> фронту CLK.
+          <p class="mt-6">Порушення будь-якого з них призводить до <strong>metastability</strong> —
+          вихід flip-flop зависає між логічним 0 і 1 на непередбачуваний час. MCU сприйме
+          невизначений стан.</p>
+          <p class="mt-6">На практиці це проявляється як рандомні збої, які неможливо відтворити
+          в лабораторії — один з найнеприємніших типів багів в embedded-розробці.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Що таке CPOL і CPHA у SPI? По якому фронту захоплюються дані у Mode 0?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <strong>CPOL</strong> — рівень CLK у стані спокою: <code class="ic">CPOL=0</code> → LOW,
+          <code class="ic">CPOL=1</code> → HIGH.
+          <p class="mt-6"><strong>CPHA</strong> — по якому фронту захоплюються дані:
+          <code class="ic">CPHA=0</code> → перший фронт, <code class="ic">CPHA=1</code> → другий фронт.</p>
+          <p class="mt-6"><strong>SPI Mode 0</strong> (CPOL=0, CPHA=0): CLK у спокої LOW,
+          захоплення по <em>наростаючому</em> (першому) фронту, виставлення даних по спадаючому.
+          Найпоширеніший режим — BME280, MPU-6050, W25Qxx.</p>
+          <p class="mt-6">Типова пастка: "перший фронт" ≠ "наростаючий". При CPOL=1 перший
+          фронт — спадаючий.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Що таке ringing і як він пов'язаний з крутизною фронту?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <strong>Ringing</strong> — загасаючі осциляції після фронту. Виникають через LC-резонанс:
+          <code class="ic">L</code> доріжки (нГн/мм) + паразитна <code class="ic">C</code> навантаження.
+          <p class="mt-6">Крутий фронт має широкий спектр гармонік → більша енергія в резонансній
+          частоті → сильніший ringing. На осцилографі виглядає як хвилі після фронту. Може
+          спричинити подвійне спрацювання EXTI.</p>
+          <p class="mt-6">Рішення:
+          <strong>1)</strong> Зменшити slew rate через <code class="ic">OSPEEDR</code>.
+          <strong>2)</strong> Послідовний резистор 22–100 Ом на виході GPIO (série damping) — 
+          гасить коливання без зміни логіки.
+          <strong>3)</strong> Суцільний ground plane та короткі доріжки.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Поясніть шлях тактового сигналу від кварцу до GPIO на STM32F4.</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          Ланцюг: <strong>HSE</strong> (кварц 8–25 МГц) → <strong>PLL</strong> (множення, до 168 МГц) →
+          <strong>SYSCLK</strong> → шини <strong>AHB → APB1/APB2</strong> → периферія.
+          <p class="mt-6">GPIO тактується від AHB1 (до 168 МГц на F4). Таймери на APB1 отримують
+          половину AHB, але якщо APBx prescaler ≠ 1 — таймери автоматично подвоюють свою частоту.</p>
+          <p class="mt-6">Основний генератор фронтів — <strong>PLL всередині МК</strong>. Кварц задає
+          точну базову частоту. Без кварцу HSI (RC-генератор) має похибку ~1% — критично для
+          UART (допустиме відхилення < 2% для надійного прийому).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Чому при натисканні кнопки виникає багато фронтів? Як усунути дребезг?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          Механічні контакти при замиканні <strong>відбиваються</strong> (bouncing) — фізично
+          розмикаються та замикаються 5–50 разів протягом 5–20 мс до стабілізації.
+          MCU з EXTI фіксує кожен перехід як окремий фронт.
+          <p class="mt-6"><strong>Апаратне рішення:</strong> RC-фільтр (10 кОм + 100 нФ) + тригер
+          Шмітта або компаратор — фронти згладжуються, перехід відбувається один раз.</p>
+          <p class="mt-6"><strong>Програмне рішення (STM32):</strong> у ISR запустити TIM з
+          автозупинкою на 20 мс. Якщо GPIO стабільний після таймера — вважати натискання дійсним.
+          <strong>ESP32 + FreeRTOS:</strong> з ISR відправити подію в Queue, таск обробляє з
+          debounce-логікою без блокування.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>На осцилографі UART TX іноді пропускає старт-біт. Що перевіряти?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          Старт-біт UART — завжди <strong>спадаючий фронт</strong> (HIGH→LOW). Можливі причини:
+          <p class="mt-6"><strong>1) Baud Rate розбіжність > 2–3%.</strong> Виникає при HSI без
+          кварцу або неправильному дільнику. Перевір: <code class="ic">USART_BRR = PCLK / BaudRate</code>.
+          Навіть 3% розбіжність на 115200 дає збій кожні кілька байт.</p>
+          <p class="mt-6"><strong>2) Повільний фронт.</strong> Велика ємність лінії (довгий кабель)
+          розтягує спадаючий фронт — приймач не встигає розпізнати старт-біт до вибірки середини
+          першого біт-інтервалу.</p>
+          <p class="mt-6"><strong>3) Шум.</strong> Спайк на лінії імітує старт-біт → фреймінг-помилка
+          → наступний справжній старт-біт ігнорується. Рішення: 100 нФ між TX і GND, або перехід
+          на RS-485 (диференційна пара).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Які регістри STM32 керують швидкістю фронту GPIO і коли це важливо?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          Регістр <code class="ic">GPIOx_OSPEEDR</code> — два біти на кожен пін:
+          <code class="ic">00</code>=LOW (~2 МГц), <code class="ic">01</code>=MEDIUM (~25 МГц),
+          <code class="ic">10</code>=HIGH (~50 МГц), <code class="ic">11</code>=VERY_HIGH (~100 МГц).
+          <p class="mt-6">Важливо обрати правильне значення: LOW для LED і загальних GPIO (менше EMI),
+          MEDIUM для UART і I²C, HIGH для SPI, VERY_HIGH лише для USB, Ethernet і FMC де
+          потрібна максимальна швидкість фронту.</p>
+          <p class="mt-6">Поширена помилка: залишити VERY_HIGH для всіх пінів після дефолтної
+          ініціалізації. Це призводить до зайвого EMI-шуму і потенційного ringing на довгих
+          доріжках, навіть якщо сигнали низькочастотні.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /accordion -->
+
+
+  <div class="page-footer">
+    // Конспект · Embedded Systems Notes · Anton Bodnia
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  /* ── Accordion ── */
+  function toggleAccordion(btn) {
+    var body   = btn.nextElementSibling;
+    var isOpen = btn.classList.contains('open');
+    document.querySelectorAll('.accordion-trigger.open').forEach(function(b) {
+      b.classList.remove('open');
+      b.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) { btn.classList.add('open'); body.classList.add('open'); }
+  }
+
+  /* ── Copy buttons ── */
+  document.querySelectorAll('.code-block-copy').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var code = this.closest('.code-block').querySelector('.code-block-body').innerText;
+      navigator.clipboard.writeText(code).catch(function(){});
+      var orig = this.textContent;
+      this.textContent = 'copied!';
+      this.style.color = 'var(--accent)';
+      var self = this;
+      setTimeout(function() { self.textContent = orig; self.style.color = ''; }, 1500);
+    });
+  });
+
+  /* ═══════════════════════════════════════════════
+     WAVEFORM CANVAS
+  ═══════════════════════════════════════════════ */
+  window.addEventListener('DOMContentLoaded', function() {
+
+    var wc   = document.getElementById('waveCanvas');
+    var wctx = wc.getContext('2d');
+    var tc   = document.getElementById('timingCanvas');
+    var tctx = tc.getContext('2d');
+    var animId  = null;
+    var playing = true;
+    var t = 0;
+
+    function resizeC(c) {
+      var w = Math.max(200, c.parentElement.clientWidth);
+      c.width = w;
+      return w;
+    }
+
+    function getSlope() { return parseInt(document.getElementById('slopeSlider').value, 10); }
+
+    function sigmoid(phase, slope) {
+      var k = 20 / slope;
+      return 1 / (1 + Math.exp(-k * (phase - 0.5)));
+    }
+    function clkFn(x, per, slope) {
+      var p = ((x % per) + per) % per / per;
+      if (p < 0.03)       return sigmoid(p / 0.03, slope);
+      if (p < 0.5)        return 1;
+      if (p < 0.53)       return 1 - sigmoid((p - 0.5) / 0.03, slope);
+      return 0;
+    }
+    function dataFn(x, per, slope) {
+      var p2 = per * 2, off = per * 0.3;
+      var p  = ((x + off) % p2 + p2) % p2 / p2;
+      if (p < 0.03)       return sigmoid(p / 0.03, slope);
+      if (p < 0.5)        return 1;
+      if (p < 0.53)       return 1 - sigmoid((p - 0.5) / 0.03, slope);
+      return 0;
+    }
+    function trigFn(x, per, slope) {
+      var p3 = per * 1.7;
+      var p  = ((x * 0.59) % p3 + p3) % p3 / p3;
+      if (p < 0.03)       return sigmoid(p / 0.03, slope * 1.5);
+      if (p < 0.38)       return 1;
+      if (p < 0.41)       return 1 - sigmoid((p - 0.38) / 0.03, slope * 1.5);
+      return 0;
+    }
+
+    var SIGS = [
+      { name: 'CLK',     color: '#4a9eff', fn: clkFn  },
+      { name: 'DATA',    color: '#00d084', fn: dataFn },
+      { name: 'TRIGGER', color: '#ff6b4a', fn: trigFn },
+    ];
+
+    function drawWave() {
+      var W     = wc.width, H = wc.height;
+      var slope = getSlope(), per = 120;
+      var rowH  = H / SIGS.length;
+
+      wctx.clearRect(0, 0, W, H);
+
+      /* grid */
+      wctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      wctx.lineWidth = 1;
+      for (var gx = 0; gx < W; gx += 60) {
+        wctx.beginPath(); wctx.moveTo(gx, 0); wctx.lineTo(gx, H); wctx.stroke();
+      }
+      for (var i = 0; i <= SIGS.length; i++) {
+        wctx.beginPath(); wctx.moveTo(0, i*rowH); wctx.lineTo(W, i*rowH); wctx.stroke();
+      }
+
+      /* rising-edge guides */
+      wctx.setLineDash([2, 5]);
+      wctx.strokeStyle = 'rgba(74,158,255,0.2)';
+      wctx.lineWidth = 1;
+      for (var px = 2; px < W; px++) {
+        var v0 = clkFn(px-1+t, per, slope), v1 = clkFn(px+t, per, slope);
+        if (v1 - v0 > 0.1) {
+          wctx.beginPath(); wctx.moveTo(px, 0); wctx.lineTo(px, H); wctx.stroke();
+        }
+      }
+      wctx.setLineDash([]);
+
+      /* signals */
+      SIGS.forEach(function(sig, idx) {
+        var yBot = (idx+1)*rowH - 8, yTop = idx*rowH + 8, amp = yBot - yTop;
+        wctx.strokeStyle = sig.color;
+        wctx.lineWidth   = 1.5;
+        wctx.shadowColor = sig.color;
+        wctx.shadowBlur  = 4;
+        wctx.beginPath();
+        for (var px2 = 0; px2 <= W; px2++) {
+          var v = sig.fn(px2+t, per, slope);
+          var y = yBot - v * amp;
+          px2 === 0 ? wctx.moveTo(px2, y) : wctx.lineTo(px2, y);
+        }
+        wctx.stroke();
+        wctx.shadowBlur = 0;
+        /* label */
+        wctx.fillStyle = sig.color;
+        wctx.font = '10px JetBrains Mono';
+        wctx.fillText(sig.name, 6, yTop + 13);
+      });
+    }
+
+    function loop() {
+      if (!playing) return;
+      resizeC(wc);
+      drawWave();
+      t += 1.2;
+      animId = requestAnimationFrame(loop);
+    }
+
+    /* controls */
+    document.getElementById('btnPlay').addEventListener('click', function() {
+      if (!playing) { playing = true; loop(); }
+      this.classList.add('active');
+      document.getElementById('btnPause').classList.remove('active');
+    });
+    document.getElementById('btnPause').addEventListener('click', function() {
+      playing = false; cancelAnimationFrame(animId);
+      this.classList.add('active');
+      document.getElementById('btnPlay').classList.remove('active');
+    });
+    document.getElementById('btnReset').addEventListener('click', function() {
+      t = 0;
+      if (!playing) { resizeC(wc); drawWave(); }
+    });
+    document.getElementById('slopeSlider').addEventListener('input', function() {
+      document.getElementById('slopeVal').textContent = this.value + ' нс';
+    });
+
+    /* tooltip */
+    var tooltip = document.getElementById('wave-tooltip');
+    wc.addEventListener('mousemove', function(e) {
+      var rect = wc.getBoundingClientRect();
+      var mx = (e.clientX - rect.left) * (wc.width / rect.width);
+      var my = (e.clientY - rect.top)  * (wc.height / rect.height);
+      var rowH = wc.height / SIGS.length;
+      var idx  = Math.max(0, Math.min(SIGS.length-1, Math.floor(my/rowH)));
+      var sig  = SIGS[idx];
+      var v    = sig.fn(mx+t, 120, getSlope());
+      var tns  = Math.round(mx / wc.width * 5000);
+      tooltip.innerHTML = '<span style="color:' + sig.color + '">' + sig.name + '</span>  ' +
+                          (v > 0.5 ? 'HIGH' : 'LOW') + '  ~' + tns + ' нс';
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top  = (e.clientY - 8)  + 'px';
+      tooltip.style.opacity = '1';
+    });
+    wc.addEventListener('mouseleave', function() { tooltip.style.opacity = '0'; });
+
+    /* ── TIMING DIAGRAM ── */
+    function drawTiming() {
+      var W = Math.max(200, tc.parentElement.clientWidth);
+      tc.width = W;
+      var H = tc.height;
+      tctx.clearRect(0, 0, W, H);
+
+      var yH  = H * 0.10, yL  = H * 0.87;
+      var y90 = yL - (yL-yH)*0.9, y10 = yL - (yL-yH)*0.1;
+      var x0=W*0.08, xR1=W*0.20, xR2=W*0.37, xF1=W*0.57, xF2=W*0.74, x1=W*0.94;
+
+      /* grid */
+      tctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      tctx.lineWidth = 1;
+      for (var gx=0; gx<W; gx+=40) {
+        tctx.beginPath(); tctx.moveTo(gx,0); tctx.lineTo(gx,H); tctx.stroke();
+      }
+
+      /* waveform */
+      tctx.strokeStyle = '#00d084';
+      tctx.lineWidth   = 2;
+      tctx.shadowColor = '#00d084';
+      tctx.shadowBlur  = 6;
+      tctx.beginPath();
+      tctx.moveTo(x0, yL); tctx.lineTo(xR1, yL);
+      tctx.bezierCurveTo(xR1+(xR2-xR1)*0.3,yL, xR2-(xR2-xR1)*0.3,yH, xR2,yH);
+      tctx.lineTo(xF1,yH);
+      tctx.bezierCurveTo(xF1+(xF2-xF1)*0.3,yH, xF2-(xF2-xF1)*0.3,yL, xF2,yL);
+      tctx.lineTo(x1,yL);
+      tctx.stroke(); tctx.shadowBlur=0;
+
+      /* dashed refs */
+      function hline(y, color, lbl) {
+        tctx.setLineDash([3,5]); tctx.strokeStyle=color; tctx.lineWidth=1;
+        tctx.beginPath(); tctx.moveTo(x0,y); tctx.lineTo(x1,y); tctx.stroke();
+        tctx.setLineDash([]);
+        tctx.fillStyle=color; tctx.font='10px JetBrains Mono';
+        tctx.fillText(lbl, 4, y+4);
+      }
+      hline(y90,'rgba(0,208,132,0.5)','90%');
+      hline(y10,'rgba(0,208,132,0.5)','10%');
+      hline(yH, 'rgba(255,255,255,0.15)','HIGH');
+      hline(yL, 'rgba(255,255,255,0.15)','LOW');
+
+      /* arrows */
+      function arrowH(xa,xb,y,color,lbl) {
+        tctx.strokeStyle=color; tctx.fillStyle=color; tctx.lineWidth=1.5;
+        tctx.beginPath(); tctx.moveTo(xa,y); tctx.lineTo(xb,y); tctx.stroke();
+        tctx.beginPath(); tctx.moveTo(xa,y); tctx.lineTo(xa+6,y-3); tctx.lineTo(xa+6,y+3); tctx.closePath(); tctx.fill();
+        tctx.beginPath(); tctx.moveTo(xb,y); tctx.lineTo(xb-6,y-3); tctx.lineTo(xb-6,y+3); tctx.closePath(); tctx.fill();
+        tctx.font='bold 11px JetBrains Mono'; tctx.fillText(lbl,(xa+xb)/2-6,y-8);
+      }
+      arrowH(xR1+(xR2-xR1)*0.1, xR1+(xR2-xR1)*0.9, y90-22, '#00d084', 'tᵣ');
+      arrowH(xF1+(xF2-xF1)*0.1, xF1+(xF2-xF1)*0.9, y10-22, '#ff6b4a', 'tᶠ');
+
+      tctx.fillStyle='rgba(255,255,255,0.2)'; tctx.font='10px JetBrains Mono';
+      tctx.fillText('3.3V', W-36, yH+12);
+      tctx.fillText('0V',   W-26, yL+12);
+    }
+
+    /* start */
+    resizeC(wc);
+    drawTiming();
+    loop();
+
+    window.addEventListener('resize', function() {
+      drawTiming();
+      if (!playing) { resizeC(wc); drawWave(); }
+    });
+  });
+</script>
+
+</body>
+</html>
