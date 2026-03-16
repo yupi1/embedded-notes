@@ -18,7 +18,6 @@
     /* ══════════════════════════════════════════════════════════
        DESIGN TOKENS — єдине джерело правди.
        Копіюй цей блок :root без змін у кожну нову сторінку.
-       Джерело: ui-kit.html
     ══════════════════════════════════════════════════════════ */
     :root {
       --bg-base:      #0d0f10;
@@ -60,15 +59,31 @@
       /*
         ╔══════════════════════════════════════════╗
         ║  КРОК 2 — встанови акцентний колір теми  ║
-        ║                                          ║
-        ║  Доступні значення:                      ║
         ║    var(--rising)  — зелений (electronics)║
         ║    var(--clk)     — синій (protocols)    ║
-        ║    var(--warning) — жовтий (RTOS)        ║
+        ║    var(--warning) — жовтий (RTOS/memory) ║
         ║    var(--falling) — помаранчевий (MCU)   ║
         ╚══════════════════════════════════════════╝
       */
       --topic-color: var(--clk); /* ← ЗМІНИТИ */
+
+      /* ══ Canvas text — світліші кольори для читабельності ══
+         Використовуй у ctx.fillStyle замість хардкодних rgba.
+         Приклад: ctx.fillStyle = 'var(--canvas-label)';
+         Але в JS краще читати через getComputedStyle або
+         просто використовуй константи нижче як референс:
+
+         --canvas-label:      rgba(255,255,255,0.75)  ← основні підписи
+         --canvas-label-dim:  rgba(255,255,255,0.45)  ← другорядні (осі, значення)
+         --canvas-grid:       rgba(255,255,255,0.06)  ← сітка
+         --canvas-zero:       rgba(255,255,255,0.18)  ← нульова лінія
+         --canvas-threshold:  rgba(255,255,255,0.35)  ← порогові лінії
+      */
+      --canvas-label:     rgba(255,255,255,0.75);
+      --canvas-label-dim: rgba(255,255,255,0.45);
+      --canvas-grid:      rgba(255,255,255,0.06);
+      --canvas-zero:      rgba(255,255,255,0.18);
+      --canvas-threshold: rgba(255,255,255,0.35);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -112,6 +127,8 @@
     .callout-warning   .callout-icon { background: rgba(245,200,66,0.2); color: var(--warning); }
     .callout-important { background: rgba(0,208,132,0.05);   border: 1px solid rgba(0,208,132,0.15);   color: var(--text-secondary); }
     .callout-important .callout-icon { background: var(--accent-dim); color: var(--accent); }
+    .callout-danger    { background: rgba(255,74,74,0.06);   border: 1px solid rgba(255,74,74,0.18);   color: var(--text-secondary); }
+    .callout-danger    .callout-icon { background: rgba(255,74,74,0.18); color: var(--danger); }
     .callout strong { color: var(--text-primary); }
 
     /* ── Code block ── */
@@ -170,26 +187,22 @@
     .wave-animated   { animation: dash-run 3s linear infinite; }
 
     /* ══════════════════════════════════════════════════
-       PAGE LAYOUT — структура сторінки
+       PAGE LAYOUT
     ══════════════════════════════════════════════════ */
-
     .page-top-line {
       height: 2px;
       background: linear-gradient(90deg, var(--topic-color) 0%, transparent 60%);
     }
-
     .page-wrap {
       max-width: 820px;
       margin: 0 auto;
       padding: 56px 40px 120px;
     }
-
     .page-header {
       border-bottom: 1px solid var(--border-dim);
       padding-bottom: 48px;
-      margin-bottom: 56px;
+      margin-bottom: 40px; /* зменшено з 56px — місце під зміст */
     }
-
     .page-eyebrow {
       font-family: var(--font-mono);
       font-size: 10px;
@@ -202,7 +215,6 @@
       gap: 8px;
     }
     .page-eyebrow::before { content: '//'; color: var(--topic-color); font-size: 12px; }
-
     .page-title {
       font-size: clamp(32px, 5vw, 50px);
       font-weight: 300;
@@ -211,7 +223,6 @@
       margin-bottom: 16px;
     }
     .page-title-accent { color: var(--topic-color); }
-
     .page-desc {
       font-size: var(--text-lg);
       color: var(--text-secondary);
@@ -219,15 +230,73 @@
       line-height: 1.65;
       margin-bottom: 20px;
     }
-
     .page-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 
+    /* ══════════════════════════════════════════════════
+       TABLE OF CONTENTS  ← НОВИЙ КОМПОНЕНТ
+    ══════════════════════════════════════════════════ */
+    .toc {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-dim);
+      border-left: 2px solid var(--topic-color);
+      border-radius: var(--r-xl);
+      padding: 20px 24px;
+      margin-bottom: 56px;
+    }
+    .toc-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toc-title::before { content: '//'; color: var(--topic-color); }
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 4px 24px;
+    }
+    .toc-list li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      transition: color 0.15s;
+    }
+    .toc-list li a:hover { color: var(--topic-color); }
+    .toc-list li a:hover .toc-num { border-color: var(--topic-color); color: var(--topic-color); }
+    .toc-num {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-muted);
+      border: 1px solid var(--border-dim);
+      border-radius: 3px;
+      padding: 1px 5px;
+      min-width: 26px;
+      text-align: center;
+      flex-shrink: 0;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    /* ══════════════════════════════════════════════════
+       SECTIONS
+    ══════════════════════════════════════════════════ */
     .section-header {
       display: flex;
       align-items: baseline;
       gap: 14px;
       margin-bottom: 20px;
       margin-top: 56px;
+      /* scroll-margin щоб заголовок не ховався за фіксовані елементи */
+      scroll-margin-top: 24px;
     }
     .section-num  { font-family: var(--font-mono); font-size: 11px; color: var(--topic-color); opacity: 0.7; min-width: 28px; }
     .section-name { font-size: var(--text-xl); font-weight: 400; color: var(--text-primary); }
@@ -254,6 +323,27 @@
     .mt-8  { margin-top: 32px; }
     .stack { display: flex; flex-direction: column; gap: 12px; }
     .divider { height: 1px; background: var(--border-dim); margin: 40px 0; }
+
+    /* ── Lists ── */
+    .topic-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .topic-list li { display: flex; gap: 10px; color: var(--text-secondary); font-size: var(--text-base); }
+    .topic-list li::before { content: '—'; color: var(--topic-color); font-family: var(--font-mono); flex-shrink: 0; }
+    .steps-list { list-style: none; counter-reset: steps; display: flex; flex-direction: column; gap: 10px; }
+    .steps-list li { counter-increment: steps; display: flex; gap: 12px; color: var(--text-secondary); font-size: var(--text-base); }
+    .steps-list li::before { content: counter(steps); font-family: var(--font-mono); font-size: 10px; color: var(--topic-color); background: var(--accent-dim); border: 1px solid rgba(0,208,132,0.2); border-radius: 3px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    /* ── Def cards ── */
+    .def-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .def-card { background: var(--bg-elevated); border: 1px solid var(--border-dim); border-radius: var(--r-lg); padding: 16px; }
+    .def-card-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .def-card-value { font-size: var(--text-base); color: var(--text-secondary); line-height: 1.6; }
+    .def-card-value strong { color: var(--text-primary); }
+
+    @media (max-width: 600px) {
+      .page-wrap  { padding: 32px 20px 80px; }
+      .def-cards  { grid-template-columns: 1fr; }
+      .toc-list   { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -262,29 +352,25 @@
 
   <div class="page-wrap">
 
-    <!-- ══════════════════════════════════════════════════
-         HEADER
-         Змінювати: eyebrow, title, page-title-accent, desc, tags
-    ══════════════════════════════════════════════════ -->
     <a class="back-link" href="../index.html">← повернутись до конспекту</a>
 
+    <!-- ══════════════════════════════════════════════════
+         HEADER
+         КРОК 3–6: eyebrow, title, desc, tags
+    ══════════════════════════════════════════════════ -->
     <header class="page-header">
 
-      <!-- КРОК 3 — категорія: "Конспект · Protocols" або "Конспект · RTOS" тощо -->
       <div class="page-eyebrow">Конспект · CATEGORY</div>
 
-      <!-- КРОК 4 — назва теми. Акцентне слово (технічний термін) у .page-title-accent -->
       <h1 class="page-title">
         TOPIC <span class="page-title-accent">NAME</span>
       </h1>
 
-      <!-- КРОК 5 — короткий опис (1-3 речення). Де використовується, навіщо. -->
       <p class="page-desc">
         Короткий опис теми. Де використовується і чому важливо для embedded.
         Регістр <code class="ic">REG</code> та типові режими роботи.
       </p>
 
-      <!-- КРОК 6 — теги. Залиш потрібні. -->
       <div class="page-tags">
         <span class="badge badge-rising badge-pill">learnt</span>
         <!-- <span class="badge badge-warning badge-pill">in progress</span> -->
@@ -297,10 +383,31 @@
 
 
     <!-- ══════════════════════════════════════════════════
-         01 — КЛЮЧОВІ ПАРАМЕТРИ (опційно — видали якщо не потрібно)
-         Числові характеристики: частота, швидкість, напруга тощо.
+         ЗМІСТ  ← НОВИЙ БЛОК
+         КРОК 7 — відредагуй назви під конкретну тему.
+         Видали рядки яких немає у цій сторінці.
+         id у href = id на відповідному section-header нижче.
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
+    <nav class="toc" aria-label="Зміст">
+      <div class="toc-title">Зміст</div>
+      <ol class="toc-list">
+        <li><a href="#section-01"><span class="toc-num">01</span> Ключові параметри</a></li>
+        <li><a href="#section-02"><span class="toc-num">02</span> Що це таке</a></li>
+        <li><a href="#section-03"><span class="toc-num">03</span> Діаграма</a></li>
+        <li><a href="#section-04"><span class="toc-num">04</span> Ключові терміни</a></li>
+        <li><a href="#section-05"><span class="toc-num">05</span> Код</a></li>
+        <li><a href="#section-06"><span class="toc-num">06</span> На що звернути увагу</a></li>
+        <li><a href="#section-qa"><span class="toc-num">Q&A</span> Питання на співбесіді</a></li>
+      </ol>
+    </nav>
+    <!-- /toc -->
+
+
+    <!-- ══════════════════════════════════════════════════
+         01 — КЛЮЧОВІ ПАРАМЕТРИ (опційно — видали якщо не потрібно)
+         id="section-01" обов'язковий — на нього посилається зміст
+    ══════════════════════════════════════════════════ -->
+    <div id="section-01" class="section-header">
       <span class="section-num">01 —</span>
       <span class="section-name">Ключові параметри</span>
     </div>
@@ -331,10 +438,8 @@
 
     <!-- ══════════════════════════════════════════════════
          02 — ЩО ЦЕ ТАКЕ
-         Визначення + принцип роботи.
-         callout-important = ключова ідея, яку ТРЕБА запам'ятати.
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
+    <div id="section-02" class="section-header">
       <span class="section-num">02 —</span>
       <span class="section-name">Що це таке</span>
     </div>
@@ -354,11 +459,8 @@
 
     <!-- ══════════════════════════════════════════════════
          03 — ДІАГРАМА / АНІМАЦІЯ
-         Контейнер .waveform-demo підходить для будь-яких
-         тайм-діаграм, схем, структур.
-         Замінити placeholder SVG на реальну анімацію.
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
+    <div id="section-03" class="section-header">
       <span class="section-num">03 —</span>
       <span class="section-name">Діаграма</span>
     </div>
@@ -380,8 +482,9 @@
             </pattern>
           </defs>
           <rect width="680" height="100" fill="url(#pgrid)"/>
+          <!-- fill="#8b897e" — читабельніший текст на canvas/svg -->
           <text x="340" y="55" text-anchor="middle"
-            font-family="JetBrains Mono" font-size="12" fill="#52504a">
+            font-family="JetBrains Mono" font-size="12" fill="#8b897e">
             [ SVG / Canvas анімація тут ]
           </text>
         </svg>
@@ -394,9 +497,8 @@
 
     <!-- ══════════════════════════════════════════════════
          04 — КЛЮЧОВІ ТЕРМІНИ / РЕЄСТРИ
-         Таблиця: лівий стовпець = термін, правий = визначення.
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
+    <div id="section-04" class="section-header">
       <span class="section-num">04 —</span>
       <span class="section-name">Ключові терміни та реєстри</span>
     </div>
@@ -421,9 +523,8 @@
 
     <!-- ══════════════════════════════════════════════════
          05 — КОД (обов'язкова секція!)
-         Мінімум один приклад. Для обох платформ — два блоки.
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
+    <div id="section-05" class="section-header">
       <span class="section-num">05 —</span>
       <span class="section-name">Код</span>
     </div>
@@ -458,9 +559,8 @@
 
     <!-- ══════════════════════════════════════════════════
          06 — НА ЩО ЗВЕРНУТИ УВАГУ (опційно)
-         Типові помилки та практичні поради.
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
+    <div id="section-06" class="section-header">
       <span class="section-num">06 —</span>
       <span class="section-name">На що звернути увагу</span>
     </div>
@@ -478,12 +578,10 @@
 
 
     <!-- ══════════════════════════════════════════════════
-         07 — ПИТАННЯ НА СПІВБЕСІДІ (обов'язкова секція!)
-         Акордеон: клік на питання → відкривається відповідь.
-         Мінімум 3 питання.
+         Q&A — ПИТАННЯ НА СПІВБЕСІДІ (обов'язкова секція!)
     ══════════════════════════════════════════════════ -->
-    <div class="section-header">
-      <span class="section-num">07 —</span>
+    <div id="section-qa" class="section-header">
+      <span class="section-num">Q&A —</span>
       <span class="section-name">Питання на співбесіді</span>
     </div>
 
