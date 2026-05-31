@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Буфер · Конспект · Embedded Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --bg2: #161a24;
+  --bg3: #1e2333;
+  --border: #2a3045;
+  --border2: #3a4560;
+  --text: #e8eaf0;
+  --text2: #9ba3b8;
+  --text3: #5a6480;
+  --accent: #4f8ef7;
+  --accent2: #7c5cf6;
+  --green: #3dd68c;
+  --amber: #f5a623;
+  --red: #f25c5c;
+  --teal: #2dd4bf;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+  --r: 8px;
+  --r2: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+.page-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ── NAV ── */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0 0;
+  font-size: 13px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  margin-bottom: 48px;
+}
+nav a { color: var(--accent); text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+nav span { color: var(--text3); }
+
+/* ── HEADER ── */
+.header { margin-bottom: 48px; }
+.breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 12px;
+  letter-spacing: .04em;
+}
+h1 {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  margin-bottom: 16px;
+}
+.lead {
+  color: var(--text2);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 640px;
+  margin-bottom: 20px;
+}
+.tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  background: var(--bg2);
+}
+
+/* ── SECTION ── */
+.section { margin-bottom: 64px; }
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: var(--text3);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--border2);
+}
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  margin-bottom: 16px;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+p { color: var(--text2); margin-bottom: 12px; }
+
+/* ── CALLOUT ── */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--bg2);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 14px 18px;
+  margin: 20px 0;
+  font-size: 14px;
+  color: var(--text2);
+}
+.callout.key { border-color: var(--amber); }
+.callout.info { border-color: var(--teal); }
+.callout.warn { border-color: var(--red); }
+.callout b { color: var(--text); font-weight: 600; }
+.callout-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+.callout.key .callout-title { color: var(--amber); }
+.callout.info .callout-title { color: var(--teal); }
+.callout.warn .callout-title { color: var(--red); }
+.callout .callout-title { color: var(--accent); }
+
+/* ── TABLE ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 20px 0;
+}
+th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--text3);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+td:first-child { font-family: var(--font-mono); color: var(--accent); }
+td code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--amber);
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  margin: 20px 0;
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+.code-lang {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.code-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
+pre {
+  padding: 18px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.kw { color: #c792ea; }
+.fn { color: #82aaff; }
+.nm { color: var(--green); }
+.st { color: #f78c6c; }
+.cm { color: var(--text3); font-style: italic; }
+.nb { color: var(--amber); }
+
+/* ── ANIMATION WIDGET ── */
+.widget-wrap {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  overflow: hidden;
+  margin: 24px 0;
+}
+.widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+.live-badge {
+  background: var(--green);
+  color: #0a2018;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+@keyframes pulse-badge { 0%,100%{opacity:1}50%{opacity:.6} }
+.widget-body { padding: 20px 18px; }
+
+/* SCENE */
+.scene{display:flex;align-items:flex-start;gap:6px;margin-bottom:12px}
+.node-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.node-label{font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:.06em;text-align:center;text-transform:uppercase}
+.device{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:7px 10px;font-family:var(--font-mono);font-size:11px;color:var(--text2);text-align:center;width:80px}
+.device.cpu-dev{border-color:var(--accent2)}
+.device.proc-dev{border-color:var(--green)}
+.device-icon{font-size:16px;margin-bottom:2px}
+.device-name{font-weight:600;font-size:9px;letter-spacing:.06em}
+.buf-wrap{width:78px}
+.buf-title{font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:.08em;text-align:center;margin-bottom:3px}
+.buf-slots{display:flex;flex-direction:column;gap:2px;border:1px solid var(--border2);border-radius:6px;padding:4px;background:var(--bg)}
+.buf-slot{height:18px;border-radius:3px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9px;color:var(--text3);transition:background .25s,border-color .25s,color .25s}
+.buf-slot.tx-fill{border-color:var(--accent);background:rgba(79,142,247,.13);color:var(--accent)}
+.buf-slot.rx-fill{border-color:var(--teal);background:rgba(45,212,191,.11);color:var(--teal)}
+.buf-slot.rx-thresh{border-color:var(--amber);background:rgba(245,166,35,.14);color:var(--amber);animation:tpulse .7s ease-in-out infinite alternate}
+.buf-slot.flush-out{animation:flush-out .45s ease forwards}
+@keyframes tpulse{0%{box-shadow:none}100%{box-shadow:0 0 6px 2px rgba(245,166,35,.3)}}
+@keyframes flush-out{0%{background:rgba(245,166,35,.25);border-color:var(--amber);color:var(--amber)}100%{background:var(--bg2);border-color:var(--border);color:var(--text3)}}
+.buf-count{font-family:var(--font-mono);font-size:8px;color:var(--text3);text-align:center;margin-top:2px}
+.ch-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding-top:28px}
+.ch-label{font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:.05em;white-space:nowrap}
+.ch-line{width:100%;height:2px;background:var(--border);border-radius:2px;position:relative}
+.pkt{position:absolute;top:-8px;width:20px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9px;font-weight:700;pointer-events:none;z-index:10;left:0}
+.pkt.cpu-to-tx{background:var(--accent2);color:#fff;box-shadow:0 0 7px rgba(124,92,246,.5)}
+.pkt.tx-to-rx{background:var(--accent);color:#fff;box-shadow:0 0 7px rgba(79,142,247,.5)}
+.pkt.flush-pkt{background:var(--amber);color:#111;box-shadow:0 0 9px rgba(245,166,35,.55)}
+@keyframes slide{0%{left:0;opacity:0;transform:scale(.5)}8%{opacity:1;transform:scale(1)}92%{opacity:1}100%{left:calc(100% - 20px);opacity:0}}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 10px;font-family:var(--font-mono);font-size:9px;color:var(--text3)}
+.leg-item{display:flex;align-items:center;gap:4px}
+.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.thresh-row{display:flex;align-items:center;gap:10px;margin:10px 0;font-family:var(--font-mono);font-size:10px;color:var(--text3)}
+.thresh-row input[type=range]{flex:1;accent-color:var(--amber)}
+.thresh-val{color:var(--amber);min-width:16px;text-align:right}
+.stats-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.stat{flex:1;min-width:60px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;text-align:center}
+.stat-val{font-family:var(--font-mono);font-size:17px;font-weight:600;line-height:1;margin-bottom:2px}
+.stat-val.v{color:var(--accent2)}.stat-val.tx{color:var(--accent)}.stat-val.rx{color:var(--teal)}.stat-val.fl{color:var(--amber)}.stat-val.dr{color:var(--red)}
+.stat-name{font-size:8px;font-family:var(--font-mono);color:var(--text3);letter-spacing:.06em}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.btn{font-family:var(--font-mono);font-size:11px;padding:6px 13px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;transition:all .18s}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--bg2)}
+.btn:active{transform:scale(.97)}
+.btn.v{background:rgba(124,92,246,.12);border-color:var(--accent2);color:var(--accent2)}
+.btn.v:hover{background:rgba(124,92,246,.22)}
+.btn.danger{background:rgba(242,92,92,.1);border-color:var(--red);color:var(--red)}
+.auto-row{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text2);font-family:var(--font-mono)}
+.wtoggle{position:relative;width:30px;height:16px;cursor:pointer}
+.wtoggle input{opacity:0;width:0;height:0}
+.wtog-track{position:absolute;inset:0;background:var(--border2);border-radius:8px;transition:background .2s}
+.wtoggle input:checked ~ .wtog-track{background:var(--accent)}
+.wtog-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;background:#fff;border-radius:50%;transition:transform .2s}
+.wtoggle input:checked ~ .wtog-track .wtog-thumb{transform:translateX(14px)}
+.log-wrap{margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:7px 11px;max-height:100px;overflow-y:auto;font-family:var(--font-mono);font-size:10px;display:flex;flex-direction:column;gap:2px}
+.log-entry{display:flex;gap:8px;color:var(--text3);line-height:1.5}
+.log-time{flex-shrink:0}
+.log-entry.cpu .log-msg{color:var(--accent2)}
+.log-entry.wtx .log-msg{color:var(--accent)}
+.log-entry.wrx .log-msg{color:var(--teal)}
+.log-entry.wfl .log-msg{color:var(--amber)}
+.log-entry.wsys .log-msg{color:var(--text2)}
+
+/* divider */
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+/* Q&A accordion */
+.qa-item { border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 8px; overflow: hidden; }
+.qa-q { padding: 14px 18px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text); user-select: none; transition: background .15s; }
+.qa-q:hover { background: var(--bg2); }
+.qa-q .arrow { font-size: 12px; color: var(--text3); transition: transform .25s; flex-shrink: 0; }
+.qa-item.open .qa-q .arrow { transform: rotate(180deg); }
+.qa-a { max-height: 0; overflow: hidden; transition: max-height .35s ease; font-size: 13px; color: var(--text2); line-height: 1.7; }
+.qa-item.open .qa-a { max-height: 400px; }
+.qa-a-inner { padding: 4px 18px 16px; border-top: 1px solid var(--border); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<nav>
+  <a href="#">← конспект</a>
+  <span>/</span>
+  <span>Embedded Systems</span>
+  <span>/</span>
+  <span>Buffer</span>
+</nav>
+
+<div class="header">
+  <div class="breadcrumb">Конспект · Embedded · Data Transfer · Buffer</div>
+  <h1>Буфер (Buffer)</h1>
+  <p class="lead">
+    Буфер — тимчасова область пам'яті між відправником і приймачем. Він вирівнює різницю в швидкості обробки
+    даних і дозволяє системам працювати асинхронно, не чекаючи одна на одну.
+  </p>
+  <div class="tags">
+    <span class="tag">UART</span>
+    <span class="tag">FIFO</span>
+    <span class="tag">DMA</span>
+    <span class="tag">Ring Buffer</span>
+    <span class="tag">STM32</span>
+    <span class="tag">ESP32</span>
+  </div>
+</div>
+
+<!-- ── SECTION 01 ── -->
+<div class="section">
+  <div class="section-label">01 — Що таке буфер</div>
+  <h2>Буфер як черга між двома пристроями</h2>
+  <p>
+    Коли передавач надсилає дані швидше, ніж приймач може їх обробити — без буфера дані втрачаються.
+    Буфер «ловить» байти, що надходять, і зберігає їх до моменту, коли приймач буде готовий прочитати.
+  </p>
+  <p>
+    В мікроконтролерах буфери є скрізь: UART RX/TX буфери, DMA буфери, SPI FIFO, USB endpoint буфери.
+    Принцип один — <b style="color:var(--text)">акумуляція → поріг → обробка</b>.
+  </p>
+
+  <div class="callout key">
+    <div class="callout-title">KEY</div>
+    <b>Ключова ідея:</b> Буфер — це не просто пам'ять. Це угода між двома сторонами:
+    відправник пише коли хоче, приймач читає коли готовий. Буфер посередині гарантує, що нічого не загубиться.
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">INF</div>
+    <b>Аналогія:</b> Поштова скринька перед дверима. Листоноша кидає листи коли прийшов —
+    ти читаєш коли зручно. Скринька — буфер між вами двома.
+  </div>
+</div>
+
+<!-- ── SECTION 02 — ANIMATION ── -->
+<div class="section">
+  <div class="section-label">02 — Інтерактивна анімація</div>
+  <h2>Передача та зчитування даних</h2>
+  <p>
+    Нижче — жива модель. Передавач (TX) надсилає пакети в свій буфер, вони летять каналом і осідають
+    у буфері приймача (RX). Коли буфер RX досягає порогу X — приймач зчитує весь буфер і передає дані далі обробнику.
+  </p>
+
+  <div class="widget-wrap">
+    <div class="widget-header">
+      <span>▶ LIVE · Buffer Simulation · TX Queue + RX Flush</span>
+      <span class="live-badge" id="live-badge">MANUAL</span>
+    </div>
+    <div class="widget-body">
+      <div class="scene" id="scene">
+        <!-- CPU -->
+        <div class="node-col">
+          <div class="node-label">CPU / задача</div>
+          <div class="device cpu-dev">
+            <div class="device-icon">🖥</div>
+            <div class="device-name">CPU</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);text-align:center;margin-top:2px" id="cpu-status">вільний</div>
+        </div>
+        <!-- CPU→TX channel -->
+        <div class="ch-col" style="padding-top:20px">
+          <div class="ch-label" style="color:var(--accent2)">CPU → TX buf</div>
+          <div class="ch-line" id="cpu-tx-line"></div>
+        </div>
+        <!-- TX buffer -->
+        <div class="node-col">
+          <div class="node-label">TX Buffer</div>
+          <div class="buf-wrap">
+            <div class="buf-title">черга на відправку</div>
+            <div class="buf-slots" id="tx-buf"></div>
+            <div class="buf-count" id="tx-count">0 / 4</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:8px;color:var(--accent);text-align:center">↑ DMA читає</div>
+        </div>
+        <!-- DMA→channel -->
+        <div class="ch-col" style="padding-top:20px">
+          <div class="ch-label" style="color:var(--accent)">DMA → канал</div>
+          <div class="ch-line" id="dma-ch-line"></div>
+          <div class="ch-label" id="ch-status" style="color:var(--text3)">idle</div>
+        </div>
+        <!-- Channel -->
+        <div class="node-col" style="padding-top:18px">
+          <div class="node-label">UART канал</div>
+          <div class="ch-line" id="main-ch-line" style="width:60px;height:3px;background:var(--border2)"></div>
+        </div>
+        <!-- channel→RX -->
+        <div class="ch-col" style="padding-top:20px">
+          <div class="ch-label" style="color:var(--teal)">→ RX buf</div>
+          <div class="ch-line" id="rx-in-line"></div>
+        </div>
+        <!-- RX buffer -->
+        <div class="node-col">
+          <div class="node-label">RX Buffer</div>
+          <div class="buf-wrap">
+            <div class="buf-title">накопичувач</div>
+            <div class="buf-slots" id="rx-buf"></div>
+            <div class="buf-count" id="rx-count">0 / 6</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:8px;color:var(--amber);text-align:center" id="thresh-hint">поріг: 4</div>
+        </div>
+        <!-- flush→proc -->
+        <div class="ch-col" style="padding-top:20px">
+          <div class="ch-label" style="color:var(--amber)">flush →</div>
+          <div class="ch-line" id="flush-line"></div>
+        </div>
+        <!-- Processor -->
+        <div class="node-col">
+          <div class="node-label">Обробник</div>
+          <div class="device proc-dev">
+            <div class="device-icon">⚙️</div>
+            <div class="device-name">HANDLER</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);text-align:center;margin-top:2px" id="proc-status">очікує...</div>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--accent2)"></div>CPU пише у TX</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--accent)"></div>DMA вичитує з TX</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Байт у RX</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>Flush → обробник</div>
+      </div>
+
+      <div class="thresh-row">
+        <span>ПОРІГ FLUSH (X)</span>
+        <input type="range" id="threshold" min="1" max="6" value="4" step="1" oninput="setThreshold(this.value)">
+        <span class="thresh-val" id="th-val">4</span>
+        <span>/ 6 байт</span>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat"><div class="stat-val v" id="st-cpu">0</div><div class="stat-name">CPU WRITES</div></div>
+        <div class="stat"><div class="stat-val tx" id="st-dma">0</div><div class="stat-name">DMA SENT</div></div>
+        <div class="stat"><div class="stat-val rx" id="st-rx">0</div><div class="stat-name">RX RECV</div></div>
+        <div class="stat"><div class="stat-val fl" id="st-fl">0</div><div class="stat-name">FLUSHES</div></div>
+        <div class="stat"><div class="stat-val dr" id="st-dr">0</div><div class="stat-name">DROPPED</div></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn v" onclick="cpuWrite()">▶ CPU: записати байт</button>
+        <button class="btn danger" onclick="resetAll()">↺ Скинути</button>
+        <div style="flex:1"></div>
+        <div class="auto-row">
+          <label class="wtoggle">
+            <input type="checkbox" id="auto-chk" onchange="toggleAuto(this.checked)">
+            <div class="wtog-track"><div class="wtog-thumb"></div></div>
+          </label>
+          <span>Авто</span>
+        </div>
+      </div>
+      <div class="log-wrap" id="log"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 03 ── -->
+<div class="section">
+  <div class="section-label">03 — Принцип роботи</div>
+  <h2>Як буфер реалізується насправді</h2>
+  <p>
+    Найпоширеніша реалізація буфера в embedded — <b style="color:var(--text)">кільцевий буфер (Ring Buffer / Circular Buffer)</b>.
+    Два вказівники: <code style="font-family:var(--font-mono);color:var(--amber);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:4px">head</code> (куди пишемо)
+    і <code style="font-family:var(--font-mono);color:var(--teal);font-size:13px;background:var(--bg3);padding:1px 6px;border-radius:4px">tail</code> (звідки читаємо).
+    Буфер фіксованого розміру, вказівники рухаються по колу — звідси і назва.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Компонент</th>
+        <th>Роль</th>
+        <th>В коді (STM32)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>TX Buffer</td>
+        <td>Накопичує дані для відправки. DMA/IRQ передає по одному байту.</td>
+        <td><code>HAL_UART_Transmit_DMA()</code></td>
+      </tr>
+      <tr>
+        <td>RX Buffer</td>
+        <td>Приймає байти з UART. Коли досягнуто поріг — IRQ будить задачу.</td>
+        <td><code>HAL_UART_Receive_IT()</code></td>
+      </tr>
+      <tr>
+        <td>Поріг (X)</td>
+        <td>Кількість байт, після якої відбувається flush. Типово: розмір пакету або таймаут.</td>
+        <td><code>RXNE_THRESHOLD</code></td>
+      </tr>
+      <tr>
+        <td>Flush</td>
+        <td>Атомарна операція: зчитати весь буфер, скинути лічильник, передати у чергу задач.</td>
+        <td><code>osMessageQueuePut()</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <div class="callout-title">WRN</div>
+    <b>Buffer Overflow!</b> Якщо приймач не встигає зчитувати, а буфер заповниться повністю —
+    нові байти губляться. Вирішення: збільшити буфер, підвищити пріоритет задачі, або додати flow control (XOFF/CTS).
+  </div>
+</div>
+
+<!-- ── SECTION 04 — CODE ── -->
+<div class="section">
+  <div class="section-label">04 — Код</div>
+  <h2>Реалізація Ring Buffer та Flush-логіки</h2>
+  <p>Мінімальна реалізація кільцевого буфера з порогом для STM32 + FreeRTOS.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-lang"><div class="code-dot"></div> C · STM32 HAL · Ring Buffer</div>
+      <span>copy</span>
+    </div>
+    <pre><span class="cm">/* ── Визначення Ring Buffer ────────────────────────────────── */</span>
+<span class="kw">#define</span> <span class="nm">RX_BUF_SIZE</span>  <span class="nb">64</span>
+<span class="kw">#define</span> <span class="nm">FLUSH_THRESHOLD</span> <span class="nb">8</span>   <span class="cm">/* поріг X: flush при N байтах */</span>
+
+<span class="kw">typedef struct</span> {
+    <span class="kw">uint8_t</span>  data[<span class="nm">RX_BUF_SIZE</span>];
+    <span class="kw">uint16_t</span> head;   <span class="cm">/* вказівник запису  */</span>
+    <span class="kw">uint16_t</span> tail;   <span class="cm">/* вказівник читання */</span>
+    <span class="kw">uint16_t</span> count;  <span class="cm">/* кількість байт в буфері */</span>
+} <span class="nm">RingBuf_t</span>;
+
+<span class="kw">static</span> <span class="nm">RingBuf_t</span> rxBuf = {<span class="nb">0</span>};
+
+<span class="cm">/* ── UART RX IRQ — кожен байт, що прийшов ─────────────────── */</span>
+<span class="kw">void</span> <span class="fn">HAL_UART_RxCpltCallback</span>(<span class="kw">UART_HandleTypeDef</span> *huart) {
+    <span class="kw">if</span> (rxBuf.count < <span class="nm">RX_BUF_SIZE</span>) {
+        rxBuf.data[rxBuf.head] = rxByte;        <span class="cm">/* покласти в буфер */</span>
+        rxBuf.head = (rxBuf.head + <span class="nb">1</span>) % <span class="nm">RX_BUF_SIZE</span>; <span class="cm">/* просунути head */</span>
+        rxBuf.count++;
+    } <span class="kw">else</span> {
+        overflowCount++;                        <span class="cm">/* буфер повний — overflow! */</span>
+    }
+
+    <span class="cm">/* Поріг досягнуто — будимо задачу обробки */</span>
+    <span class="kw">if</span> (rxBuf.count >= <span class="nm">FLUSH_THRESHOLD</span>) {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        <span class="fn">vTaskNotifyGiveFromISR</span>(rxTaskHandle, &xHigherPriorityTaskWoken);
+        <span class="fn">portYIELD_FROM_ISR</span>(xHigherPriorityTaskWoken);
+    }
+    <span class="fn">HAL_UART_Receive_IT</span>(&huart1, &rxByte, <span class="nb">1</span>); <span class="cm">/* наступний байт */</span>
+}
+
+<span class="cm">/* ── FreeRTOS задача: flush буфера ─────────────────────────── */</span>
+<span class="kw">void</span> <span class="fn">RxProcessTask</span>(<span class="kw">void</span> *arg) {
+    <span class="kw">uint8_t</span> packet[<span class="nm">RX_BUF_SIZE</span>];
+    <span class="kw">uint16_t</span> len;
+
+    <span class="kw">for</span> (;;) {
+        <span class="fn">ulTaskNotifyTake</span>(pdTRUE, portMAX_DELAY); <span class="cm">/* чекаємо сигналу */</span>
+
+        <span class="cm">/* ── FLUSH: читаємо весь буфер атомарно ── */</span>
+        <span class="fn">taskENTER_CRITICAL</span>();
+        len = rxBuf.count;
+        <span class="kw">for</span> (<span class="kw">uint16_t</span> i = <span class="nb">0</span>; i < len; i++) {
+            packet[i] = rxBuf.data[rxBuf.tail];
+            rxBuf.tail = (rxBuf.tail + <span class="nb">1</span>) % <span class="nm">RX_BUF_SIZE</span>;
+        }
+        rxBuf.count = <span class="nb">0</span>;           <span class="cm">/* буфер порожній */</span>
+        <span class="fn">taskEXIT_CRITICAL</span>();
+
+        <span class="cm">/* Передаємо пакет черзі задач (черга FreeRTOS) */</span>
+        <span class="fn">osMessageQueuePut</span>(msgQueue, packet, <span class="nb">0</span>, <span class="nb">0</span>);
+    }
+}</pre>
+  </div>
+</div>
+
+<hr>
+
+<!-- ── Q&A ── -->
+<div class="section">
+  <div class="section-label">Q&A — Питання на співбесіді</div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      Чому буфер кільцевий, а не лінійний масив?
+      <span class="arrow">▾</span>
+    </div>
+    <div class="qa-a"><div class="qa-a-inner">
+      <p>Лінійний масив вимагав би зсуву всіх елементів при кожному читанні — O(n) операцій, що критично в ISR.
+      Кільцевий буфер пересуває лише вказівник <code style="font-family:var(--font-mono);color:var(--amber)">tail</code> — O(1).
+      Жодної пам'яті не переміщується, жодного копіювання. Це і є причина повсюдного використання в embedded.</p>
+    </div></div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      Що таке buffer overflow і як захиститись?
+      <span class="arrow">▾</span>
+    </div>
+    <div class="qa-a"><div class="qa-a-inner">
+      <p>Buffer overflow — ситуація, коли дані надходять швидше, ніж буфер може прийняти. Нові байти перезаписують старі або губляться.</p>
+      <p>Захист: <b style="color:var(--text)">1)</b> збільшити розмір буфера, <b style="color:var(--text)">2)</b> підвищити пріоритет задачі-обробника,
+      <b style="color:var(--text)">3)</b> hardware flow control (RTS/CTS для UART), <b style="color:var(--text)">4)</b> програмний flow control (XON/XOFF),
+      <b style="color:var(--text)">5)</b> DMA з double buffering — поки одна половина обробляється, в другу йдуть нові дані.</p>
+    </div></div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      Як flush відбувається без втрати даних з IRQ?
+      <span class="arrow">▾</span>
+    </div>
+    <div class="qa-a"><div class="qa-a-inner">
+      <p>Flush виконується в критичній секції (<code style="font-family:var(--font-mono);color:var(--amber)">taskENTER_CRITICAL</code>) або з вимкненими перериваннями.
+      За час flush IRQ не може модифікувати <code style="font-family:var(--font-mono);color:var(--amber)">head</code> або <code style="font-family:var(--font-mono);color:var(--amber)">count</code>.
+      Після flush <code style="font-family:var(--font-mono);color:var(--amber)">count = 0</code> і <code style="font-family:var(--font-mono);color:var(--amber)">tail = head</code>,
+      IRQ знову може писати — без race condition.</p>
+    </div></div>
+  </div>
+
+  <div class="qa-item" onclick="toggleQA(this)">
+    <div class="qa-q">
+      Чому не флашити побайтово, а ждати порогу?
+      <span class="arrow">▾</span>
+    </div>
+    <div class="qa-a"><div class="qa-a-inner">
+      <p>Кожна обробка пакету — це overhead: перемикання контексту FreeRTOS, виклик callback, можливо перевірка CRC.
+      Якщо обробляти кожен байт окремо — overhead може перевищити корисну роботу. Групова обробка (flush by threshold)
+      амортизує витрати: один виклик обробника — N байт. Типовий поріг = розмір протокольного пакету.</p>
+    </div></div>
+  </div>
+</div>
+
+</div><!-- end page-wrap -->
+
+<script>
+const TX_MAX = 4, RX_MAX = 6;
+let txSlots = [], rxSlots = [];
+let threshold = 4;
+let cpuWrites = 0, dmasSent = 0, rxRecv = 0, flushes = 0, dropped = 0;
+let pktSeq = 0;
+let autoTimer = null;
+let channelBusy = false;
+let txQueue = [];
+let rxQueue = [];
+
+function initSlots() {
+  ['tx-buf','rx-buf'].forEach(id => document.getElementById(id).innerHTML = '');
+  txSlots = []; rxSlots = [];
+  for (let i = 0; i < TX_MAX; i++) {
+    const d = document.createElement('div');
+    d.className = 'buf-slot';
+    document.getElementById('tx-buf').appendChild(d);
+    txSlots.push(d);
+  }
+  for (let i = 0; i < RX_MAX; i++) {
+    const d = document.createElement('div');
+    d.className = 'buf-slot';
+    document.getElementById('rx-buf').appendChild(d);
+    rxSlots.push(d);
+  }
+}
+
+function renderTx() {
+  for (let i = 0; i < TX_MAX; i++) {
+    txSlots[i].className = 'buf-slot';
+    if (i < txQueue.length) { txSlots[i].classList.add('tx-fill'); txSlots[i].textContent = txQueue[i]; }
+    else txSlots[i].textContent = '';
+  }
+  document.getElementById('tx-count').textContent = txQueue.length + ' / ' + TX_MAX;
+}
+
+function renderRx() {
+  for (let i = 0; i < RX_MAX; i++) {
+    rxSlots[i].className = 'buf-slot';
+    if (i < rxQueue.length) {
+      rxSlots[i].classList.add(rxQueue.length >= threshold ? 'rx-thresh' : 'rx-fill');
+      rxSlots[i].textContent = rxQueue[i];
+    } else rxSlots[i].textContent = '';
+  }
+  document.getElementById('rx-count').textContent = rxQueue.length + ' / ' + RX_MAX;
+}
+
+function setThreshold(v) {
+  threshold = +v;
+  document.getElementById('th-val').textContent = v;
+  document.getElementById('thresh-hint').textContent = 'поріг: ' + v;
+  renderRx();
+}
+
+function cpuWrite() {
+  pktSeq = (pktSeq + 1) & 0xFF;
+  const hex = pktSeq.toString(16).padStart(2,'0').toUpperCase();
+  if (txQueue.length >= TX_MAX) {
+    dropped++;
+    updateStats();
+    addLog('wsys', 'TX buf повний — 0x'+hex+' відкинуто');
+    return;
+  }
+  txQueue.push(hex);
+  cpuWrites++;
+  updateStats();
+  addLog('cpu', 'CPU → TX buf['+txQueue.length+'] = 0x'+hex+'  (миттєво, CPU вільний)');
+  renderTx();
+  animPkt('cpu-tx-line', hex, 'cpu-to-tx', 280, null);
+  kickDma();
+}
+
+function kickDma() {
+  if (channelBusy || txQueue.length === 0) return;
+  channelBusy = true;
+  const hex = txQueue.shift();
+  renderTx();
+  addLog('wtx', 'DMA ← TX buf → канал: 0x'+hex);
+  document.getElementById('ch-status').textContent = 'tx 0x'+hex;
+  document.getElementById('ch-status').style.color = 'var(--accent)';
+  animPkt('dma-ch-line', hex, 'tx-to-rx', 320, () => {
+    animPkt('main-ch-line', hex, 'tx-to-rx', 500, () => {
+      animPkt('rx-in-line', hex, 'tx-to-rx', 220, () => {
+        dmasSent++;
+        if (rxQueue.length < RX_MAX) {
+          rxQueue.push(hex);
+          rxRecv++;
+          updateStats();
+          addLog('wrx', 'RX buf['+rxQueue.length+'] ← 0x'+hex);
+          renderRx();
+          document.getElementById('ch-status').textContent = 'idle';
+          document.getElementById('ch-status').style.color = 'var(--text3)';
+          channelBusy = false;
+          if (rxQueue.length >= threshold) {
+            setTimeout(() => { addLog('wfl','⚡ поріг X='+threshold+' → flush!'); doFlush(); }, 180);
+          } else {
+            kickDma();
+          }
+        } else {
+          dropped++;
+          updateStats();
+          addLog('wsys','RX buf повний — 0x'+hex+' відкинуто');
+          document.getElementById('ch-status').textContent = 'idle';
+          document.getElementById('ch-status').style.color = 'var(--text3)';
+          channelBusy = false;
+          kickDma();
+        }
+      });
+    });
+  });
+}
+
+function doFlush() {
+  const n = rxQueue.length;
+  for (let i = 0; i < n; i++) {
+    rxSlots[i].classList.remove('rx-fill','rx-thresh');
+    rxSlots[i].classList.add('flush-out');
+    const s = rxSlots[i];
+    setTimeout(() => { s.className = 'buf-slot'; s.textContent = ''; }, 480);
+  }
+  rxQueue = [];
+  flushes++;
+  updateStats();
+  animPkt('flush-line', 'x'+n, 'flush-pkt', 480, () => {
+    document.getElementById('proc-status').textContent = 'отримав '+n+'б';
+    document.getElementById('proc-status').style.color = 'var(--green)';
+    addLog('wfl', '→ обробник отримав '+n+' байт');
+    renderRx();
+    setTimeout(() => {
+      document.getElementById('proc-status').textContent = 'очікує...';
+      document.getElementById('proc-status').style.color = 'var(--text3)';
+    }, 1200);
+    kickDma();
+  });
+}
+
+function animPkt(lineId, label, cls, dur, cb) {
+  const line = document.getElementById(lineId);
+  const pk = document.createElement('div');
+  pk.className = 'pkt ' + cls;
+  pk.textContent = label;
+  pk.style.animation = 'slide '+dur+'ms ease forwards';
+  line.appendChild(pk);
+  setTimeout(() => { if(pk.parentNode) pk.remove(); if(cb) cb(); }, dur + 10);
+}
+
+function updateStats() {
+  document.getElementById('st-cpu').textContent = cpuWrites;
+  document.getElementById('st-dma').textContent = dmasSent;
+  document.getElementById('st-rx').textContent  = rxRecv;
+  document.getElementById('st-fl').textContent  = flushes;
+  document.getElementById('st-dr').textContent  = dropped;
+}
+
+let logTick = 0;
+function addLog(type, msg) {
+  const log = document.getElementById('log');
+  const el = document.createElement('div');
+  el.className = 'log-entry ' + type;
+  el.innerHTML = '<span class="log-time">'+String(logTick++).padStart(4,'0')+'</span><span class="log-msg">'+msg+'</span>';
+  log.appendChild(el);
+  log.scrollTop = log.scrollHeight;
+  if (log.children.length > 100) log.removeChild(log.firstChild);
+}
+
+function toggleAuto(on) {
+  const b = document.getElementById('live-badge');
+  if (on) {
+    b.textContent = 'AUTO'; b.style.background = 'var(--green)';
+    autoTimer = setInterval(cpuWrite, 1000);
+    addLog('wsys','Авто-режим: CPU пише кожну 1с');
+  } else {
+    clearInterval(autoTimer); autoTimer = null;
+    b.textContent = 'MANUAL'; b.style.background = 'var(--accent)';
+    addLog('wsys','Авто-режим вимкнено');
+  }
+}
+
+function resetAll() {
+  clearInterval(autoTimer); autoTimer = null;
+  document.getElementById('auto-chk').checked = false;
+  txQueue = []; rxQueue = [];
+  cpuWrites = dmasSent = rxRecv = flushes = dropped = pktSeq = 0;
+  channelBusy = false;
+  initSlots(); renderTx(); renderRx(); updateStats();
+  document.getElementById('ch-status').textContent = 'idle';
+  document.getElementById('ch-status').style.color = 'var(--text3)';
+  document.getElementById('cpu-status').textContent = 'вільний';
+  document.getElementById('proc-status').textContent = 'очікує...';
+  document.getElementById('proc-status').style.color = 'var(--text3)';
+  document.getElementById('live-badge').textContent = 'MANUAL';
+  document.getElementById('live-badge').style.background = 'var(--accent)';
+  document.querySelectorAll('.pkt').forEach(p => p.remove());
+  document.getElementById('log').innerHTML = '';
+  addLog('wsys','--- скинуто ---');
+}
+
+function toggleQA(el) { el.classList.toggle('open'); }
+
+initSlots();
+addLog('wsys','Готово. CPU пише миттєво у TX → DMA відправляє у фоні → RX накопичує → flush по порогу.');
+</script>
+</body>
+</html>
