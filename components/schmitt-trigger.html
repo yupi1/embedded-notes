@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schmitt Trigger · Конспект · Embedded Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0c0c10;
+      --bg-s:      #111118;
+      --bg-card:   #16161e;
+      --bg-code:   #1b1b25;
+      --border:    #2a2a3a;
+      --border-d:  #1e1e2c;
+      --text:      #e2e0da;
+      --dim:       #6e6c7c;
+      --dim2:      #9694a2;
+      --orange:    #ff6b35;
+      --green:     #4ade80;
+      --red:       #f87171;
+      --blue:      #60a5fa;
+      --yellow:    #fbbf24;
+      --mono:      'JetBrains Mono', monospace;
+      --sans:      'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans);
+           line-height: 1.7; -webkit-font-smoothing: antialiased; }
+
+    /* ── Nav ─────────────────────────────────────────────── */
+    .site-nav { border-bottom: 1px solid var(--border-d); padding: 14px 24px; }
+    .breadcrumb { font-family: var(--mono); font-size: 12px; color: var(--dim);
+                  display: flex; align-items: center; gap: 8px; }
+    .breadcrumb a { color: var(--dim); text-decoration: none; transition: color .15s; }
+    .breadcrumb a:hover { color: var(--text); }
+    .bc-sep { opacity: .35; }
+
+    /* ── Layout ──────────────────────────────────────────── */
+    .wrap { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero { padding: 52px 0 44px; border-bottom: 1px solid var(--border-d); }
+    .hero-eye { font-family: var(--mono); font-size: 11px; color: var(--dim);
+                letter-spacing: .08em; text-transform: uppercase; margin-bottom: 18px; }
+    .hero-title { font-family: var(--mono); font-size: clamp(30px,5vw,46px);
+                  font-weight: 600; letter-spacing: -.02em; line-height: 1.12; margin-bottom: 14px; }
+    .hero-title em { color: var(--orange); font-style: normal; }
+    .hero-sub { font-size: 15px; color: var(--dim2); max-width: 540px; margin-bottom: 24px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { font-family: var(--mono); font-size: 11px; padding: 3px 9px;
+           border: 1px solid var(--border); border-radius: 3px; color: var(--dim); }
+
+    /* ── TOC ─────────────────────────────────────────────── */
+    .toc { margin: 32px 0; padding: 18px 22px; background: var(--bg-card);
+           border: 1px solid var(--border); border-radius: 6px; }
+    .toc-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+                 letter-spacing: .08em; color: var(--dim); margin-bottom: 12px; }
+    .toc ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .toc a { font-family: var(--mono); font-size: 13px; color: var(--dim2);
+             text-decoration: none; display: flex; align-items: center; gap: 14px; transition: color .15s; }
+    .toc a:hover { color: var(--text); }
+    .toc-n { opacity: .4; min-width: 22px; }
+
+    /* ── Sections ────────────────────────────────────────── */
+    .sec { padding: 52px 0; border-bottom: 1px solid var(--border-d); }
+    .sec-hd { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+    .sec-n { font-family: var(--mono); font-size: 11px; color: var(--dim); opacity: .5; min-width: 28px; }
+    .sec-title { font-family: var(--mono); font-size: 20px; font-weight: 600;
+                 color: var(--text); letter-spacing: -.01em; }
+
+    /* ── Prose ───────────────────────────────────────────── */
+    p { color: var(--dim2); font-size: 15px; line-height: 1.75; margin-bottom: 14px; }
+    strong { color: var(--text); font-weight: 500; }
+    code { font-family: var(--mono); font-size: 12.5px; background: var(--bg-code);
+           padding: 2px 6px; border-radius: 3px; color: var(--orange); }
+
+    /* ── Callouts ────────────────────────────────────────── */
+    .callout { padding: 14px 18px; border-radius: 6px; margin: 18px 0;
+               display: flex; gap: 12px; align-items: flex-start; }
+    .callout-key { background: rgba(255,107,53,.07); border: 1px solid rgba(255,107,53,.22); }
+    .callout-inf { background: rgba(96,165,250,.06); border: 1px solid rgba(96,165,250,.18); }
+    .callout-wrn { background: rgba(251,191,36,.06); border: 1px solid rgba(251,191,36,.18); }
+    .cl-badge { font-family: var(--mono); font-size: 10px; font-weight: 600;
+                letter-spacing: .1em; text-transform: uppercase; padding: 3px 7px;
+                border-radius: 3px; min-width: 38px; text-align: center; flex-shrink: 0; margin-top: 1px; }
+    .callout-key .cl-badge { background: rgba(255,107,53,.18); color: var(--orange); }
+    .callout-inf .cl-badge { background: rgba(96,165,250,.14); color: var(--blue); }
+    .callout-wrn .cl-badge { background: rgba(251,191,36,.14); color: var(--yellow); }
+    .cl-text { font-size: 14px; color: var(--dim2); line-height: 1.65; }
+    .cl-text strong { color: var(--text); }
+
+    /* ── Code blocks ─────────────────────────────────────── */
+    .codeblock { background: var(--bg-code); border: 1px solid var(--border);
+                 border-radius: 6px; margin: 18px 0; overflow: hidden; }
+    .cb-head { display: flex; align-items: center; justify-content: space-between;
+               padding: 10px 14px; border-bottom: 1px solid var(--border-d); }
+    .cb-lang { font-family: var(--mono); font-size: 11px; color: var(--dim);
+               text-transform: uppercase; letter-spacing: .06em; }
+    .cb-copy { font-family: var(--mono); font-size: 11px; color: var(--dim); background: none;
+               border: 1px solid var(--border); padding: 3px 10px; border-radius: 3px;
+               cursor: pointer; transition: all .15s; }
+    .cb-copy:hover { color: var(--text); border-color: var(--dim); }
+    .cb-body { padding: 15px; overflow-x: auto; }
+    .cb-body pre { font-family: var(--mono); font-size: 12.5px; color: #b8b6c4; line-height: 1.65; }
+    .cb-comment { color: var(--dim); }
+    .cb-keyword { color: var(--blue); }
+    .cb-val { color: var(--orange); }
+    .cb-str { color: var(--green); }
+
+    /* ── Comparison grid ─────────────────────────────────── */
+    .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+           background: var(--border-d); border: 1px solid var(--border);
+           border-radius: 6px; overflow: hidden; margin: 18px 0; }
+    .cmp-col { background: var(--bg-card); padding: 18px 20px; }
+    .cmp-title { font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+                 letter-spacing: .06em; margin-bottom: 12px; }
+    .cmp-title.bad  { color: var(--red); }
+    .cmp-title.good { color: var(--green); }
+    .cmp-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .cmp-list li { font-family: var(--mono); font-size: 12.5px; color: var(--dim2); }
+    .cmp-list span { color: var(--orange); }
+
+    /* ── Demo wrapper ────────────────────────────────────── */
+    .demo { background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 8px; overflow: hidden; margin: 22px 0; }
+    .demo-head { display: flex; align-items: center; justify-content: space-between;
+                 padding: 11px 16px; border-bottom: 1px solid var(--border-d); }
+    .demo-title { font-family: var(--mono); font-size: 12px; color: var(--dim2); }
+    .live { display: flex; align-items: center; gap: 6px;
+            font-family: var(--mono); font-size: 10px; color: var(--green);
+            text-transform: uppercase; letter-spacing: .06em; }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+                animation: blink 1.5s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.75)} }
+    .demo-body { padding: 16px; }
+
+    /* ── Canvas pair ─────────────────────────────────────── */
+    .canvas-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cp-panel {}
+    .cp-label { font-family: var(--mono); font-size: 11px; color: var(--dim2);
+                margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .cp-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    canvas { display: block; width: 100%; border-radius: 4px;
+             background: #090910; border: 1px solid var(--border-d); }
+
+    /* ── Hysteresis demo ─────────────────────────────────── */
+    .hyst-body { display: grid; grid-template-columns: 1fr 260px; }
+    .hyst-chart { padding: 16px; border-right: 1px solid var(--border-d); }
+    .hyst-ctrl { padding: 20px 18px; display: flex; flex-direction: column; gap: 16px; }
+
+    .vin-display { line-height: 1; }
+    .vin-big { font-family: var(--mono); font-size: 38px; font-weight: 600; color: var(--text); }
+    .vin-unit { font-family: var(--mono); font-size: 13px; color: var(--dim); margin-left: 2px; }
+    .vin-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim);
+               text-transform: uppercase; letter-spacing: .07em; margin-top: 4px; }
+
+    .out-badge { padding: 12px 14px; border-radius: 5px; border: 1px solid var(--border);
+                 text-align: center; transition: all .2s; }
+    .out-badge.hi { background: rgba(74,222,128,.08); border-color: rgba(74,222,128,.28); }
+    .out-badge.lo { background: rgba(248,113,113,.07); border-color: rgba(248,113,113,.22); }
+    .out-val { font-family: var(--mono); font-size: 26px; font-weight: 600; transition: color .2s; }
+    .out-badge.hi .out-val { color: var(--green); }
+    .out-badge.lo .out-val { color: var(--red); }
+    .out-lbl { font-family: var(--mono); font-size: 10px; color: var(--dim);
+               text-transform: uppercase; letter-spacing: .07em; margin-top: 3px; }
+
+    .slider-wrap {}
+    .sl-lbl { font-family: var(--mono); font-size: 11px; color: var(--dim);
+              margin-bottom: 8px; display: flex; justify-content: space-between; }
+    input[type=range] { -webkit-appearance: none; width: 100%; height: 4px;
+                         background: var(--border); border-radius: 2px; outline: none; cursor: pointer; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--orange); border: 2px solid var(--bg-card); cursor: pointer; transition: transform .1s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .sl-marks { display: flex; justify-content: space-between; font-family: var(--mono);
+                font-size: 10px; color: var(--dim); margin-top: 6px; }
+
+    .sim-btn { font-family: var(--mono); font-size: 12px; color: var(--dim2);
+               background: var(--bg-code); border: 1px solid var(--border);
+               padding: 9px 14px; border-radius: 5px; cursor: pointer; text-align: center;
+               transition: all .15s; }
+    .sim-btn:hover { color: var(--text); border-color: var(--dim); }
+    .sim-btn.running { color: var(--orange); border-color: rgba(255,107,53,.4); }
+
+    .hyst-zone-note { font-family: var(--mono); font-size: 11px; padding: 8px 10px;
+                      background: rgba(255,107,53,.07); border: 1px solid rgba(255,107,53,.18);
+                      border-radius: 4px; color: rgba(255,107,53,.8); line-height: 1.5;
+                      transition: opacity .3s; }
+
+    .hyst-row { font-family: var(--mono); font-size: 11px; display: flex;
+                justify-content: space-between; padding: 6px 10px;
+                background: var(--bg-code); border-radius: 4px; }
+    .hyst-row-key { color: var(--dim); }
+    .hyst-row-val { font-weight: 500; }
+
+    /* ── Use cases ───────────────────────────────────────── */
+    .use-cases { display: flex; flex-direction: column; gap: 28px; margin-top: 8px; }
+    .uc { }
+    .uc-num { font-family: var(--mono); font-size: 11px; color: var(--dim);
+              text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+    .uc-title { font-family: var(--mono); font-size: 15px; font-weight: 500;
+                color: var(--text); margin-bottom: 8px; }
+
+    /* ── Q&A ─────────────────────────────────────────────── */
+    .qa-sec { padding: 44px 0; }
+    .qa-heading { font-family: var(--mono); font-size: 12px; color: var(--dim);
+                  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 22px; }
+    details { border-bottom: 1px solid var(--border-d); }
+    summary { display: flex; align-items: center; justify-content: space-between;
+              padding: 15px 0; cursor: pointer; font-size: 14px; color: var(--dim2);
+              list-style: none; user-select: none; transition: color .15s; gap: 12px; }
+    summary::-webkit-details-marker { display: none; }
+    summary:hover { color: var(--text); }
+    .qa-chevron { font-size: 11px; transition: transform .2s; opacity: .5; flex-shrink: 0; }
+    details[open] .qa-chevron { transform: rotate(90deg); }
+    .qa-answer { padding: 0 0 16px 0; font-size: 14px; color: var(--dim2); line-height: 1.72; }
+    .qa-answer strong { color: var(--text); }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    .site-footer { padding: 28px 0; text-align: center; font-family: var(--mono);
+                   font-size: 11px; color: var(--dim); opacity: .45;
+                   border-top: 1px solid var(--border-d); }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .canvas-pair { grid-template-columns: 1fr; }
+      .cmp { grid-template-columns: 1fr; }
+      .hyst-body { grid-template-columns: 1fr; }
+      .hyst-chart { border-right: none; border-bottom: 1px solid var(--border-d); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="https://yupi1.github.io/embedded-notes/index.html">← повернутись до конспекту</a>
+      <span class="bc-sep">·</span>
+      <span>Electronics</span>
+      <span class="bc-sep">·</span>
+      <span>Schmitt Trigger</span>
+    </div>
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+
+  <!-- ── Hero ──────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-eye">Конспект · Electronics · Comparators</div>
+    <h1 class="hero-title">Schmitt <em>Trigger</em></h1>
+    <p class="hero-sub">Компаратор із гістерезисом. Перетворює повільні або шумні аналогові сигнали у стабільні цифрові.</p>
+    <div class="tags">
+      <span class="tag">STM32</span>
+      <span class="tag">ESP32</span>
+      <span class="tag">Electronics</span>
+      <span class="tag">Comparator</span>
+      <span class="tag">GPIO</span>
+      <span class="tag">Hysteresis</span>
+    </div>
+  </section>
+
+  <!-- ── TOC ────────────────────────────────────────────── -->
+  <nav class="toc" aria-label="Зміст">
+    <div class="toc-label">Зміст</div>
+    <ul>
+      <li><a href="#s01"><span class="toc-n">01</span> Поняття</a></li>
+      <li><a href="#s02"><span class="toc-n">02</span> Проблема без Schmitt Trigger</a></li>
+      <li><a href="#s03"><span class="toc-n">03</span> Принцип роботи</a></li>
+      <li><a href="#s04"><span class="toc-n">04</span> Використання</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── 01 Поняття ─────────────────────────────────────── -->
+  <section class="sec" id="s01">
+    <div class="sec-hd"><span class="sec-n">01</span><h2 class="sec-title">Поняття</h2></div>
+
+    <p><strong>Schmitt Trigger</strong> (тригер Шмітта) — це компаратор або цифровий вхід із <strong>гістерезисом</strong>. Використовується для перетворення повільних або шумних аналогових сигналів у стабільні цифрові.</p>
+    <p><strong>Гістерезис</strong> — властивість системи мати різні пороги спрацювання залежно від <em>напрямку</em> зміни сигналу (зростає чи спадає). Стан перемикається не в одній точці, а в двох різних.</p>
+
+    <div class="callout callout-key">
+      <span class="cl-badge">KEY</span>
+      <div class="cl-text"><strong>Ключова ідея:</strong> Вихід не може «коливатись» навколо одного порогу, бо перехід вгору і перехід вниз відбуваються на різних напругах. Між ними — «мертва зона» нечутливості.</div>
+    </div>
+
+    <div class="cmp">
+      <div class="cmp-col">
+        <div class="cmp-title bad">Компаратор (без гістерезису)</div>
+        <ul class="cmp-list">
+          <li>Один поріг: <span>2.0 В</span></li>
+          <li>Vin &gt; 2.0В → <span>1</span></li>
+          <li>Vin &lt; 2.0В → <span>0</span></li>
+          <li>Шум біля порогу → хибні фронти</li>
+        </ul>
+      </div>
+      <div class="cmp-col">
+        <div class="cmp-title good">Schmitt Trigger (з гістерезисом)</div>
+        <ul class="cmp-list">
+          <li>VTH+ = <span>2.0 В</span> (перехід 0 → 1)</li>
+          <li>VTH− = <span>1.2 В</span> (перехід 1 → 0)</li>
+          <li>Між 1.2В і 2.0В → стан зберігається</li>
+          <li>Шум в мертвій зоні → ігнорується</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout-inf">
+      <span class="cl-badge">INF</span>
+      <div class="cl-text">Гістерезис = <strong>1.2В–2.0В</strong>. Ширина мертвої зони визначається різницею порогів: <code>ΔV = VTH+ − VTH− = 0.8В</code>. Чим ширша зона, тим стабільніша робота при сильному шумі.</div>
+    </div>
+  </section>
+
+  <!-- ── 02 Проблема ────────────────────────────────────── -->
+  <section class="sec" id="s02">
+    <div class="sec-hd"><span class="sec-n">02</span><h2 class="sec-title">Проблема без Schmitt Trigger</h2></div>
+
+    <p>Якщо сигнал повільно зростає або містить <strong>шум поблизу порогу</strong>, звичайний компаратор з одним порогом (<code>2.0В</code>) реагує на кожне коливання:</p>
+
+    <div class="codeblock">
+      <div class="cb-head"><span class="cb-lang">Signal · near threshold</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+      <div class="cb-body"><pre><span class="cb-comment">// Шумний сигнал біля 2.0В</span>
+1.98В → 2.01В → 1.99В → 2.02В → 1.97В
+
+<span class="cb-comment">// Компаратор видає:</span>
+   0  →    1  →    0  →    1  →    0    ← хибні фронти!</pre></div>
+    </div>
+
+    <div class="callout callout-wrn">
+      <span class="cl-badge">WRN</span>
+      <div class="cl-text">Мікроконтролер може <strong>пропустити переривання</strong> або відрахувати зайві імпульси, якщо GPIO входи не мають гістерезису. На практиці кожна хибна зміна стану GPIO — потенційна помилка в логіці програми.</div>
+    </div>
+
+    <!-- Animated noise demo -->
+    <div class="demo">
+      <div class="demo-head">
+        <span class="demo-title">Порівняння відгуку на шумний сигнал</span>
+        <span class="live"><span class="live-dot"></span>LIVE</span>
+      </div>
+      <div class="demo-body">
+        <div class="canvas-pair">
+          <div class="cp-panel">
+            <div class="cp-label"><span class="cp-dot" style="background:var(--red)"></span>Компаратор (VTH = 2.0В)</div>
+            <canvas id="canvas-comp" height="200"></canvas>
+          </div>
+          <div class="cp-panel">
+            <div class="cp-label"><span class="cp-dot" style="background:var(--green)"></span>Schmitt Trigger (VTH+ = 2.0В, VTH− = 1.2В)</div>
+            <canvas id="canvas-sch" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 Принцип роботи ──────────────────────────────── -->
+  <section class="sec" id="s03">
+    <div class="sec-hd"><span class="sec-n">03</span><h2 class="sec-title">Принцип роботи</h2></div>
+
+    <p>Schmitt Trigger має <strong>два порогових рівні</strong>. Вихід залежить від напрямку зміни вхідної напруги:</p>
+
+    <div class="codeblock">
+      <div class="cb-head"><span class="cb-lang">Thresholds</span></div>
+      <div class="cb-body"><pre><span class="cb-val">VTH+</span> = <span class="cb-str">2.0 В</span>   <span class="cb-comment">// перехід 0 → 1 (напруга зростає)</span>
+<span class="cb-val">VTH−</span> = <span class="cb-str">1.2 В</span>   <span class="cb-comment">// перехід 1 → 0 (напруга падає)</span></pre></div>
+    </div>
+
+    <p>Між <code>1.2В</code> і <code>2.0В</code> вихід <strong>зберігає попередній стан</strong> — це і є гістерезис. Пересунь повзунок нижче і спостерігай за петлею гістерезису.</p>
+
+    <!-- Interactive hysteresis demo -->
+    <div class="demo">
+      <div class="demo-head">
+        <span class="demo-title">Інтерактивна характеристика · Schmitt Trigger</span>
+        <span class="live"><span class="live-dot"></span>INTERACTIVE</span>
+      </div>
+      <div class="hyst-body">
+        <div class="hyst-chart">
+          <canvas id="canvas-hyst" height="260"></canvas>
+        </div>
+        <div class="hyst-ctrl">
+          <div class="vin-display">
+            <div><span class="vin-big" id="vin-big">1.65</span><span class="vin-unit">В</span></div>
+            <div class="vin-lbl">Вхідна напруга Vin</div>
+          </div>
+
+          <div class="out-badge lo" id="out-badge">
+            <div class="out-val" id="out-val">LOW</div>
+            <div class="out-lbl">Вихід Vout</div>
+          </div>
+
+          <div class="slider-wrap">
+            <div class="sl-lbl"><span>Керування напругою</span></div>
+            <input type="range" id="vin-slider" min="0" max="330" value="165" step="1">
+            <div class="sl-marks"><span>0В</span><span>1.2В</span><span>2.0В</span><span>3.3В</span></div>
+          </div>
+
+          <button class="sim-btn" id="sim-btn" onclick="simulate()">▶ Симулювати цикл</button>
+
+          <div id="hyst-zone-note" class="hyst-zone-note" style="opacity:0">
+            ⬤ Мертва зона<br>Вихід залежить від<br>попереднього стану
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="hyst-row">
+              <span class="hyst-row-key">VTH+</span>
+              <span class="hyst-row-val" style="color:var(--orange)">2.0 В</span>
+            </div>
+            <div class="hyst-row">
+              <span class="hyst-row-key">VTH−</span>
+              <span class="hyst-row-val" style="color:var(--blue)">1.2 В</span>
+            </div>
+            <div class="hyst-row">
+              <span class="hyst-row-key">ΔV</span>
+              <span class="hyst-row-val" style="color:var(--dim2)">0.8 В</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>Напруга зростає — вихід перемикається в <strong>1</strong> лише при <code>2.0В</code>. Напруга падає — вихід перемикається в <strong>0</strong> лише при <code>1.2В</code>. Шум у межах 0.8В мертвої зони повністю ігнорується.</p>
+  </section>
+
+  <!-- ── 04 Використання ────────────────────────────────── -->
+  <section class="sec" id="s04">
+    <div class="sec-hd"><span class="sec-n">04</span><h2 class="sec-title">Використання</h2></div>
+
+    <p>Застосовується скрізь, де потрібно уникнути хибних перемикань при <strong>повільних або шумних</strong> змінах сигналу.</p>
+
+    <div class="use-cases">
+
+      <div class="uc">
+        <div class="uc-num">Використання 01</div>
+        <div class="uc-title">GPIO входи мікроконтролерів</div>
+        <p>Вбудований Schmitt Trigger на GPIO входах STM32 та ESP32 дозволяє надійно розрізняти логічні 0 та 1 навіть при шумі на лінії. Це стандарт для всіх сучасних MCU.</p>
+        <div class="codeblock">
+          <div class="cb-head"><span class="cb-lang">C · STM32 HAL · GPIO Input</span><button class="cb-copy" onclick="copyCode(this)">copy</button></div>
+          <div class="cb-body"><pre><span class="cb-comment">/* GPIO у STM32 має вбудований Schmitt Trigger за замовчуванням */</span>
+<span class="cb-keyword">GPIO_InitTypeDef</span> cfg = {<span class="cb-val">0</span>};
+cfg.Pin  = GPIO_PIN_0;
+cfg.Mode = GPIO_MODE_INPUT;   <span class="cb-comment">// Schmitt trigger вже вбудований</span>
+cfg.Pull = GPIO_NOPULL;
+HAL_GPIO_Init(GPIOA, &cfg);
+
+<span class="cb-comment">// Стабільне читання незважаючи на шум</span>
+<span class="cb-keyword">GPIO_PinState</span> state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);</pre></div>
+        </div>
+      </div>
+
+      <div class="uc">
+        <div class="uc-num">Використання 02</div>
+        <div class="uc-title">Кнопки — усунення брязкоту</div>
+        <p>Кнопка при натисканні механічно «відскакує» і створює серію імпульсів (bounce). Schmitt Trigger допомагає перетворити це на чистіший сигнал, особливо в поєднанні з RC-фільтром.</p>
+        <div class="codeblock">
+          <div class="cb-head"><span class="cb-lang">Signal · Button bounce</span></div>
+          <div class="cb-body"><pre><span class="cb-comment">// Без Schmitt Trigger — сигнал при натисканні:</span>
+0 <span class="cb-val">1</span> 0 <span class="cb-val">1</span> 0 <span class="cb-val">1</span> <span class="cb-val">1 1</span>   ← bounce (хибні переривання)
+
+<span class="cb-comment">// З Schmitt Trigger + RC (10кОм + 100нФ):</span>
+0 0 0 0 0 0 <span class="cb-str">1 1</span>   ← один чистий перехід</pre></div>
+        </div>
+      </div>
+
+      <div class="uc">
+        <div class="uc-num">Використання 03</div>
+        <div class="uc-title">Після RC-ланцюгів</div>
+        <p>RC-фільтр «заокруглює» фронти сигналу — замість різкого перепаду виходить повільний перехід. Без гістерезису такий повільний сигнал поблизу порогу викликає хибні спрацьовування.</p>
+        <div class="codeblock">
+          <div class="cb-head"><span class="cb-lang">Signal · RC filter output</span></div>
+          <div class="cb-body"><pre><span class="cb-comment">// RC-фільтр: повільний фронт замість різкого</span>
+0В ──── 0.3В ── 0.8В ── 1.4В ── 2.0В ── 3.3В
+         ↑ без гістерезису — хибні спрацювання тут
+
+<span class="cb-comment">// Schmitt Trigger ігнорує зону 1.2В–2.0В</span>
+0 ──────────────────────────────── <span class="cb-str">1</span>
+                                    ↑ переключення лише тут (2.0В)</pre></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Q&A ────────────────────────────────────────────── -->
+  <section class="qa-sec">
+    <div class="qa-heading">Q&A — Питання на співбесіді</div>
+
+    <details>
+      <summary>Що таке гістерезис і навіщо він потрібен у цифровій схемотехніці?<span class="qa-chevron">›</span></summary>
+      <div class="qa-answer">
+        <strong>Гістерезис</strong> — це властивість системи мати різні пороги реакції залежно від попереднього стану або напрямку зміни вхідного сигналу. У цифровій схемотехніці він потрібен, щоб виключити «дрижання» виходу поблизу порогу перемикання. Без гістерезису сигнал з шумом <code>±50мВ</code> навколо порогу <code>2.0В</code> може викликати десятки переключень на мікросекунду. З гістерезисом перемикання відбувається лише один раз — і вихід зберігає стан, поки сигнал не вийде за межі мертвої зони.
+      </div>
+    </details>
+
+    <details>
+      <summary>Яка різниця між звичайним компаратором і Schmitt Trigger?<span class="qa-chevron">›</span></summary>
+      <div class="qa-answer">
+        <strong>Компаратор</strong> має один поріг: якщо <code>Vin > Vref</code> — вихід HIGH, якщо менше — LOW. Поблизу порогу будь-який шум викликає коливання виходу.<br><br>
+        <strong>Schmitt Trigger</strong> має два пороги: <code>VTH+</code> для переходу LOW→HIGH і <code>VTH−</code> для переходу HIGH→LOW. Між ними — мертва зона, де вихід не змінюється незалежно від шуму. Чим ширша зона (більше <code>VTH+ − VTH−</code>), тим стабільніша робота.
+      </div>
+    </details>
+
+    <details>
+      <summary>Що станеться якщо сигнал «завис» між VTH− і VTH+?<span class="qa-chevron">›</span></summary>
+      <div class="qa-answer">
+        Нічого не станеться — і це саме бажана поведінка. Вихід Schmitt Trigger у мертвій зоні (<code>1.2В – 2.0В</code>) <strong>зберігає попередній стан</strong>. Якщо перед входом у зону вихід був HIGH — він залишиться HIGH. Якщо LOW — залишиться LOW. Це і є гістерезис: вихід «пам'ятає» звідки прийшов сигнал.
+      </div>
+    </details>
+
+    <details>
+      <summary>Чи є Schmitt Trigger вже вбудований в GPIO мікроконтролерів?<span class="qa-chevron">›</span></summary>
+      <div class="qa-answer">
+        Так, у більшості сучасних MCU — так. <strong>STM32</strong>: всі GPIO входи мають вбудований Schmitt Trigger, він активний автоматично в режимі Input. <strong>ESP32</strong>: аналогічно, цифрові входи GPIO мають вбудований гістерезис. Це означає, що базовий захист від шуму ти отримуєш безкоштовно. Для екстремальних умов (дуже сильний шум, RC-фільтри) розглядають зовнішні мікросхеми типу 74HC14 (інвертор із Schmitt Trigger входом).
+      </div>
+    </details>
+
+    <details>
+      <summary>Як Schmitt Trigger вирішує проблему брязкоту кнопки (button bounce)?<span class="qa-chevron">›</span></summary>
+      <div class="qa-answer">
+        При натисканні механічна кнопка протягом <code>1–10 мс</code> «відскакує», генеруючи серію коротких імпульсів. Якщо підключити кнопку через <strong>RC-фільтр</strong> (наприклад <code>10кОм + 100нФ</code>), він «розмаже» фронт, перетворивши bounce на повільне зростання напруги. Сам по собі RC-фільтр дає повільний перехід через поріг — потенційно хибні спрацьовування. Schmitt Trigger після RC «відрізає» цю повільну зону і перетворює сигнал на чіткий цифровий перехід. Разом RC + Schmitt Trigger — класичне апаратне усунення брязкоту.
+      </div>
+    </details>
+  </section>
+
+</div><!-- /wrap -->
+</main>
+
+<footer class="site-footer">
+  Конспект · Embedded Systems Notes · Schmitt Trigger
+</footer>
+
+<script>
+// ─── Config ──────────────────────────────────────────────────────────────────
+const VCC = 3.3, VTH_H = 2.0, VTH_L = 1.2;
+const N = 320; // buffer samples
+
+// ─── Signal buffers ──────────────────────────────────────────────────────────
+let sigBuf = [], compBuf = [], schBuf = [];
+let schState = false, demoT = 0;
+
+function genV(t) {
+  const slow = VCC / 2 + 1.28 * Math.sin(t * 0.52);
+  const mid  = 0.13 * Math.sin(t * 4.1 + 0.8);
+  const fast = 0.07 * Math.sin(t * 10.3);
+  const noise = (Math.random() - 0.5) * 0.22;
+  return Math.min(VCC, Math.max(0, slow + mid + fast + noise));
+}
+
+function initBuffers() {
+  sigBuf = []; compBuf = []; schBuf = [];
+  schState = false;
+  for (let i = 0; i < N; i++) {
+    const v = genV(i * 0.042);
+    push(v);
+  }
+  demoT = N * 0.042;
+}
+
+function push(v) {
+  sigBuf.push(v);
+  if (sigBuf.length > N) sigBuf.shift();
+  compBuf.push(v >= VTH_H ? VCC : 0);
+  if (compBuf.length > N) compBuf.shift();
+  if (v >= VTH_H) schState = true;
+  else if (v <= VTH_L) schState = false;
+  schBuf.push(schState ? VCC : 0);
+  if (schBuf.length > N) schBuf.shift();
+}
+
+function tick() {
+  demoT += 0.042;
+  push(genV(demoT));
+}
+
+// ─── HiDPI canvas setup ───────────────────────────────────────────────────────
+function setupCanvas(el, lw, lh) {
+  const dpr = window.devicePixelRatio || 1;
+  el.width = lw * dpr;
+  el.height = lh * dpr;
+  el.style.height = lh + 'px';
+  const ctx = el.getContext('2d');
+  ctx.scale(dpr, dpr);
+  el._lw = lw; el._lh = lh;
+  return ctx;
+}
+
+// ─── Draw one signal canvas ───────────────────────────────────────────────────
+function drawSignalCanvas(ctx, w, h, isSchmitt) {
+  const PL = 38, PR = 10, PT = 10, PB = 10;
+  const cw = w - PL - PR;
+  const rh = (h - PT - PB - 8) / 2; // two row heights
+
+  const r0y = PT;          // signal row top
+  const r1y = PT + rh + 8; // output row top
+
+  const xI  = i => PL + (i / (N - 1)) * cw;
+  const vToY = (v, ry) => ry + (1 - v / VCC) * rh;
+  const oToY = v => r1y + (v > VCC / 2 ? 0.12 : 0.78) * rh;
+
+  // Clear
+  ctx.fillStyle = '#090910';
+  ctx.fillRect(0, 0, w, h);
+
+  // Row backgrounds
+  [[r0y, '#ffffff08'], [r1y, '#ffffff04']].forEach(([y, c]) => {
+    ctx.fillStyle = c;
+    ctx.fillRect(PL, y, cw, rh);
+  });
+
+  // ── Threshold lines on signal row ─────────────────────────────────────────
+  const drawDash = (v, color) => {
+    ctx.save();
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PL, vToY(v, r0y));
+    ctx.lineTo(PL + cw, vToY(v, r0y));
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  if (isSchmitt) {
+    // Hysteresis zone fill
+    const y1 = vToY(VTH_H, r0y), y2 = vToY(VTH_L, r0y);
+    ctx.fillStyle = 'rgba(255,107,53,0.07)';
+    ctx.fillRect(PL, y1, cw, y2 - y1);
+    drawDash(VTH_H, 'rgba(255,107,53,0.55)');
+    drawDash(VTH_L, 'rgba(96,165,250,0.55)');
+  } else {
+    drawDash(VTH_H, 'rgba(248,113,113,0.5)');
+  }
+
+  // ── Input signal ──────────────────────────────────────────────────────────
+  ctx.beginPath();
+  ctx.strokeStyle = '#ff6b35';
+  ctx.lineWidth = 1.5;
+  sigBuf.forEach((v, i) => {
+    const x = xI(i), y = vToY(v, r0y);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // ── Output (step function) ────────────────────────────────────────────────
+  const outBuf = isSchmitt ? schBuf : compBuf;
+  const outColor = isSchmitt ? '#4ade80' : '#f87171';
+  ctx.beginPath();
+  ctx.strokeStyle = outColor;
+  ctx.lineWidth = 1.8;
+  outBuf.forEach((v, i) => {
+    const x = xI(i), y = oToY(v);
+    if (i === 0) { ctx.moveTo(x, y); return; }
+    const prev = oToY(outBuf[i - 1]);
+    ctx.lineTo(x, prev); // horizontal
+    ctx.lineTo(x, y);    // vertical
+  });
+  ctx.stroke();
+
+  // ── Y-axis labels ─────────────────────────────────────────────────────────
+  ctx.font = '600 9px JetBrains Mono, monospace';
+  ctx.textAlign = 'right';
+
+  const lblS = (txt, v, ry, col) => {
+    ctx.fillStyle = col;
+    ctx.fillText(txt, PL - 4, vToY(v, ry) + 3);
+  };
+
+  lblS('3.3', VCC, r0y, 'rgba(255,255,255,0.25)');
+  if (isSchmitt) {
+    lblS('2.0', VTH_H, r0y, 'rgba(255,107,53,0.7)');
+    lblS('1.2', VTH_L, r0y, 'rgba(96,165,250,0.7)');
+  } else {
+    lblS('2.0', VTH_H, r0y, 'rgba(248,113,113,0.7)');
+  }
+  lblS('0', 0, r0y, 'rgba(255,255,255,0.2)');
+
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fillText('HI', PL - 4, r1y + rh * 0.17);
+  ctx.fillText('LO', PL - 4, r1y + rh * 0.87);
+
+  // ── Row labels ────────────────────────────────────────────────────────────
+  ctx.textAlign = 'left';
+  ctx.font = '600 9px JetBrains Mono, monospace';
+  ctx.fillStyle = 'rgba(255,107,53,0.6)';
+  ctx.fillText('INPUT', PL + 3, r0y + 10);
+  ctx.fillStyle = outColor.replace(')', ',0.7)').replace('rgb', 'rgba');
+  ctx.fillText('OUTPUT', PL + 3, r1y + 10);
+}
+
+// ─── Hysteresis curve canvas ──────────────────────────────────────────────────
+let hystOutput = 0;
+const HYST_W = 520, HYST_H = 260;
+
+function drawHyst(ctx, w, h, vin, out) {
+  const PAD = { t: 28, b: 36, l: 52, r: 18 };
+  const cw = w - PAD.l - PAD.r;
+  const ch = h - PAD.t - PAD.b;
+
+  const xV   = v => PAD.l + (v / VCC) * cw;
+  const yHi  = PAD.t + ch * 0.1;
+  const yLo  = PAD.t + ch * 0.82;
+
+  // Clear
+  ctx.fillStyle = '#090910';
+  ctx.fillRect(0, 0, w, h);
+
+  // ── Hysteresis zone fill ──────────────────────────────────────────────────
+  ctx.fillStyle = 'rgba(255,107,53,0.05)';
+  ctx.fillRect(xV(VTH_L), PAD.t, xV(VTH_H) - xV(VTH_L), ch);
+
+  // ── Grid / axes ───────────────────────────────────────────────────────────
+  ctx.save();
+  ctx.setLineDash([2, 4]);
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1;
+  [VTH_L, VTH_H].forEach(v => {
+    ctx.beginPath(); ctx.moveTo(xV(v), PAD.t);
+    ctx.lineTo(xV(v), PAD.t + ch); ctx.stroke();
+  });
+  [yHi, yLo].forEach(y => {
+    ctx.beginPath(); ctx.moveTo(PAD.l, y);
+    ctx.lineTo(PAD.l + cw, y); ctx.stroke();
+  });
+  ctx.restore();
+
+  // Axis lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD.l, PAD.t); ctx.lineTo(PAD.l, PAD.t + ch);
+  ctx.moveTo(PAD.l, PAD.t + ch); ctx.lineTo(PAD.l + cw, PAD.t + ch);
+  ctx.stroke();
+
+  // ── Hysteresis loop ───────────────────────────────────────────────────────
+  const drawArrow = (x, y, dir) => { // dir: 1=right, -1=left
+    const S = 8;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - dir * S, y - S * 0.5);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - dir * S, y + S * 0.5);
+    ctx.stroke();
+  };
+
+  // Rising path (bottom, orange): left → VTH_H → up → right
+  ctx.strokeStyle = '#ff6b35';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(xV(0), yLo);
+  ctx.lineTo(xV(VTH_H), yLo);
+  ctx.stroke();
+  drawArrow(xV(VTH_H * 0.5), yLo, 1);
+  // jump
+  ctx.beginPath();
+  ctx.moveTo(xV(VTH_H), yLo); ctx.lineTo(xV(VTH_H), yHi); ctx.stroke();
+  // continue right
+  ctx.beginPath();
+  ctx.moveTo(xV(VTH_H), yHi); ctx.lineTo(xV(VCC), yHi); ctx.stroke();
+
+  // Falling path (top, blue): right → VTH_L → down → left
+  ctx.strokeStyle = '#60a5fa';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(xV(VCC), yHi); ctx.lineTo(xV(VTH_L), yHi); ctx.stroke();
+  drawArrow(xV(VCC - (VCC - VTH_L) * 0.55), yHi, -1);
+  // jump
+  ctx.beginPath();
+  ctx.moveTo(xV(VTH_L), yHi); ctx.lineTo(xV(VTH_L), yLo); ctx.stroke();
+  // continue left
+  ctx.beginPath();
+  ctx.moveTo(xV(VTH_L), yLo); ctx.lineTo(xV(0), yLo); ctx.stroke();
+
+  // ── Current voltage indicator line ────────────────────────────────────────
+  ctx.save();
+  ctx.setLineDash([2, 3]);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(xV(vin), PAD.t);
+  ctx.lineTo(xV(vin), PAD.t + ch);
+  ctx.stroke();
+  ctx.restore();
+
+  // ── Marker (current position on loop) ────────────────────────────────────
+  const markerY = out ? yHi : yLo;
+  const markerX = xV(vin);
+
+  // glow
+  const grad = ctx.createRadialGradient(markerX, markerY, 0, markerX, markerY, 12);
+  grad.addColorStop(0, out ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.25)');
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(markerX, markerY, 12, 0, Math.PI * 2); ctx.fill();
+
+  ctx.beginPath(); ctx.arc(markerX, markerY, 5, 0, Math.PI * 2);
+  ctx.fillStyle = out ? '#4ade80' : '#f87171';
+  ctx.fill();
+
+  ctx.beginPath(); ctx.arc(markerX, markerY, 5, 0, Math.PI * 2);
+  ctx.strokeStyle = '#0c0c10'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // ── Labels ────────────────────────────────────────────────────────────────
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+
+  const xLabels = [[0, '0В'], [VTH_L, '1.2В'], [VTH_H, '2.0В'], [VCC, '3.3В']];
+  xLabels.forEach(([v, lbl]) => {
+    ctx.fillStyle = (v === VTH_L) ? 'rgba(96,165,250,0.7)' :
+                    (v === VTH_H) ? 'rgba(255,107,53,0.7)' : 'rgba(255,255,255,0.3)';
+    ctx.fillText(lbl, xV(v), PAD.t + ch + 18);
+  });
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(74,222,128,0.6)';
+  ctx.fillText('HIGH', PAD.l - 5, yHi + 4);
+  ctx.fillStyle = 'rgba(248,113,113,0.6)';
+  ctx.fillText('LOW', PAD.l - 5, yLo + 4);
+
+  // X axis label
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = '9px JetBrains Mono, monospace';
+  ctx.fillText('Vin →', PAD.l + cw / 2, PAD.t + ch + 30);
+
+  // Hysteresis zone label
+  ctx.fillStyle = 'rgba(255,107,53,0.45)';
+  ctx.font = '9px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  const zoneX = (xV(VTH_L) + xV(VTH_H)) / 2;
+  ctx.fillText('мертва', zoneX, PAD.t - 14);
+  ctx.fillText('зона', zoneX, PAD.t - 5);
+}
+
+// ─── Animation loop ───────────────────────────────────────────────────────────
+let ctxComp, ctxSch, ctxHyst;
+let noiseRunning = false;
+
+function startNoise() {
+  if (noiseRunning) return;
+  noiseRunning = true;
+  const cComp = document.getElementById('canvas-comp');
+  const cSch  = document.getElementById('canvas-sch');
+  const lw = cComp.parentElement.offsetWidth;
+  ctxComp = setupCanvas(cComp, lw, 200);
+  ctxSch  = setupCanvas(cSch, lw, 200);
+
+  initBuffers();
+
+  let frame = 0;
+  (function loop() {
+    if (!noiseRunning) return;
+    if (frame % 2 === 0) tick();
+    frame++;
+    drawSignalCanvas(ctxComp, cComp._lw, cComp._lh, false);
+    drawSignalCanvas(ctxSch,  cSch._lw,  cSch._lh,  true);
+    requestAnimationFrame(loop);
+  })();
+}
+
+// ─── Hysteresis interactive ───────────────────────────────────────────────────
+let hystCtx;
+function initHyst() {
+  const c = document.getElementById('canvas-hyst');
+  const lw = c.parentElement.offsetWidth - 32;
+  hystCtx = setupCanvas(c, Math.min(lw, HYST_W), HYST_H);
+  drawHyst(hystCtx, c._lw, c._lh, hystVin(), hystOutput);
+}
+
+function hystVin() {
+  return parseInt(document.getElementById('vin-slider').value) / 100;
+}
+
+function updateHyst() {
+  const vin = hystVin();
+  if (vin >= VTH_H) hystOutput = 1;
+  else if (vin <= VTH_L) hystOutput = 0;
+
+  const c = document.getElementById('canvas-hyst');
+  drawHyst(hystCtx, c._lw, c._lh, vin, hystOutput);
+
+  document.getElementById('vin-big').textContent = vin.toFixed(2);
+
+  const badge = document.getElementById('out-badge');
+  const val   = document.getElementById('out-val');
+  badge.className = 'out-badge ' + (hystOutput ? 'hi' : 'lo');
+  val.textContent  = hystOutput ? 'HIGH' : 'LOW';
+
+  const inZone = vin >= VTH_L && vin <= VTH_H;
+  document.getElementById('hyst-zone-note').style.opacity = inZone ? '1' : '0';
+}
+
+document.getElementById('vin-slider').addEventListener('input', updateHyst);
+
+// ─── Simulate button ──────────────────────────────────────────────────────────
+let simRunning = false;
+function simulate() {
+  if (simRunning) return;
+  simRunning = true;
+  const btn = document.getElementById('sim-btn');
+  btn.classList.add('running');
+  btn.textContent = '⏸ Симуляція...';
+
+  const slider = document.getElementById('vin-slider');
+  const STEPS = 120;
+  let step = 0;
+  const total = STEPS * 2;
+
+  // Ease in/out
+  const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+  ;(function frame() {
+    if (step <= STEPS) {
+      slider.value = Math.round(ease(step / STEPS) * 330);
+    } else {
+      const back = step - STEPS;
+      slider.value = Math.round((1 - ease(back / STEPS)) * 330);
+    }
+    updateHyst();
+    step++;
+    if (step <= total) {
+      setTimeout(frame, 18);
+    } else {
+      btn.classList.remove('running');
+      btn.textContent = '▶ Симулювати цикл';
+      simRunning = false;
+    }
+  })();
+}
+
+// ─── Copy code ────────────────────────────────────────────────────────────────
+function copyCode(btn) {
+  const code = btn.closest('.codeblock').querySelector('pre').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓ copied';
+    setTimeout(() => btn.textContent = 'copy', 1500);
+  });
+}
+
+// ─── IntersectionObserver: start noise demo when visible ─────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  initBuffers();
+  initHyst();
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        startNoise();
+        obs.disconnect();
+      }
+    });
+  }, { threshold: 0.1 });
+
+  obs.observe(document.getElementById('canvas-comp'));
+});
+</script>
+</body>
+</html>
