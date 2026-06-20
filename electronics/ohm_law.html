@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Закон Ома · Конспект · Electronics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg-base:#0d0f10;--bg-surface:#141618;--bg-elevated:#1a1d20;--bg-overlay:#21252a;
+  --border-dim:rgba(255,255,255,.06);--border-mid:rgba(255,255,255,.12);--border-bright:rgba(255,255,255,.22);
+  --text-primary:#e8e6e0;--text-secondary:#8b897e;--text-muted:#52504a;
+  --accent:#f5a623;--accent-dim:rgba(245,166,35,.12);--accent-glow:rgba(245,166,35,.05);
+  --rising:#00d084;--falling:#ff6b4a;--clk:#4a9eff;--warning:#f5c842;--danger:#ff4a4a;
+  --font-mono:'JetBrains Mono','Courier New',monospace;--font-sans:'IBM Plex Sans',system-ui,sans-serif;
+  --r-sm:4px;--r-md:6px;--r-lg:10px;--r-xl:14px;
+  --text-xs:11px;--text-sm:12px;--text-base:14px;--text-md:15px;--text-lg:17px;--text-xl:20px;--text-2xl:24px;
+  --topic-color:var(--accent);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg-base);color:var(--text-primary);font-family:var(--font-sans);font-size:var(--text-base);line-height:1.7;-webkit-font-smoothing:antialiased}
+.ic{font-family:var(--font-mono);font-size:var(--text-sm);background:var(--bg-elevated);border:1px solid var(--border-dim);padding:2px 6px;border-radius:var(--r-sm);color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:3px;font-family:var(--font-mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap}
+.badge::before{content:'';display:block;width:5px;height:5px;border-radius:50%;background:currentColor}
+.badge-pill{border-radius:100px}
+.badge-rising{background:rgba(0,208,132,.12);color:var(--rising);border:1px solid rgba(0,208,132,.25)}
+.badge-falling{background:rgba(255,107,74,.12);color:var(--falling);border:1px solid rgba(255,107,74,.25)}
+.badge-clk{background:rgba(74,158,255,.12);color:var(--clk);border:1px solid rgba(74,158,255,.25)}
+.badge-warning{background:rgba(245,200,66,.12);color:var(--warning);border:1px solid rgba(245,200,66,.25)}
+.badge-neutral{background:var(--bg-elevated);color:var(--text-secondary);border:1px solid var(--border-dim)}
+.badge-accent{background:rgba(245,166,35,.12);color:var(--accent);border:1px solid rgba(245,166,35,.25)}
+.callout{border-radius:var(--r-lg);padding:14px 16px;display:flex;gap:12px;font-size:var(--text-base);line-height:1.6}
+.callout-icon{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:3px 6px;border-radius:3px;flex-shrink:0;margin-top:1px}
+.callout-info{background:rgba(74,158,255,.07);border:1px solid rgba(74,158,255,.18);color:var(--text-secondary)}
+.callout-info .callout-icon{background:rgba(74,158,255,.2);color:var(--clk)}
+.callout-warning{background:rgba(245,200,66,.07);border:1px solid rgba(245,200,66,.18);color:var(--text-secondary)}
+.callout-warning .callout-icon{background:rgba(245,200,66,.2);color:var(--warning)}
+.callout-important{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18);color:var(--text-secondary)}
+.callout-important .callout-icon{background:var(--accent-dim);color:var(--accent)}
+.callout-danger{background:rgba(255,74,74,.07);border:1px solid rgba(255,74,74,.18);color:var(--text-secondary)}
+.callout-danger .callout-icon{background:rgba(255,74,74,.18);color:var(--danger)}
+.callout strong{color:var(--text-primary)}
+.code-block{background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-lg);overflow:hidden;font-family:var(--font-mono);font-size:var(--text-sm)}
+.code-block-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border-dim);background:var(--bg-elevated)}
+.code-block-lang{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
+.code-block-copy{font-size:10px;color:var(--text-muted);cursor:pointer;background:none;border:none;font-family:var(--font-mono);padding:0;transition:color .15s}
+.code-block-copy:hover{color:var(--accent)}
+.code-block-body{padding:16px;line-height:1.65;overflow-x:auto;color:var(--text-primary)}
+.code-block-body .kw{color:var(--clk)}.code-block-body .fn{color:var(--rising)}.code-block-body .str{color:var(--warning)}
+.code-block-body .cm{color:var(--text-muted);font-style:italic}.code-block-body .num{color:var(--falling)}.code-block-body .reg{color:var(--warning)}
+.table-wrap{background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);overflow:hidden}
+.kit-table{width:100%;border-collapse:collapse;font-size:var(--text-sm)}
+.kit-table thead tr{border-bottom:1px solid var(--border-mid)}
+.kit-table th{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-muted);padding:12px 16px;text-align:left;font-weight:500}
+.kit-table td{padding:11px 16px;color:var(--text-secondary);border-bottom:1px solid var(--border-dim);vertical-align:top}
+.kit-table tr:last-child td{border-bottom:none}
+.kit-table tr:hover td{background:rgba(255,255,255,.02)}
+.kit-table .mono{font-family:var(--font-mono);color:var(--text-primary);white-space:nowrap}
+.kit-table .accent{color:var(--accent);font-family:var(--font-mono)}
+.stat-card{background:var(--bg-elevated);border:1px solid var(--border-dim);border-radius:var(--r-lg);padding:18px 20px}
+.stat-label{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.stat-value{font-family:var(--font-mono);font-size:var(--text-2xl);font-weight:500;color:var(--text-primary)}
+.stat-unit{font-size:var(--text-sm);color:var(--text-muted);margin-left:4px}
+.stat-sub{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);margin-top:4px}
+.accordion{border:1px solid var(--border-dim);border-radius:var(--r-xl);overflow:hidden;background:var(--bg-surface)}
+.accordion-item{border-bottom:1px solid var(--border-dim)}
+.accordion-item:last-child{border-bottom:none}
+.accordion-trigger{width:100%;background:none;border:none;padding:18px 20px;text-align:left;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;transition:background .15s;color:var(--text-primary);font-size:var(--text-base);font-family:var(--font-sans)}
+.accordion-trigger:hover{background:var(--border-dim)}
+.accordion-trigger.open{background:var(--accent-glow)}
+.accordion-icon{flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1px solid var(--border-mid);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-secondary);transition:transform .25s,border-color .2s,color .2s;margin-top:2px}
+.accordion-trigger.open .accordion-icon{transform:rotate(45deg);border-color:var(--accent);color:var(--accent)}
+.accordion-body{overflow:hidden;max-height:0;transition:max-height .35s ease;background:var(--accent-glow)}
+.accordion-body.open{max-height:900px}
+.accordion-content{padding:4px 20px 20px;color:var(--text-secondary);font-size:var(--text-base);line-height:1.75;border-top:1px solid var(--border-dim)}
+.accordion-content strong{color:var(--text-primary);font-weight:500}
+.accordion-content p+p{margin-top:10px}
+.waveform-demo{background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);overflow:hidden}
+.waveform-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border-dim);background:var(--bg-elevated)}
+.waveform-title{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em}
+.waveform-body{padding:20px 20px 16px}
+.page-top-line{height:2px;background:linear-gradient(90deg,var(--topic-color) 0%,transparent 60%)}
+.page-wrap{max-width:820px;margin:0 auto;padding:56px 40px 120px}
+.page-header{border-bottom:1px solid var(--border-dim);padding-bottom:48px;margin-bottom:56px}
+.page-eyebrow{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.page-eyebrow::before{content:'//';color:var(--topic-color);font-size:12px}
+.page-title{font-size:clamp(32px,5vw,50px);font-weight:300;color:var(--text-primary);line-height:1.1;margin-bottom:16px}
+.page-title-accent{color:var(--topic-color)}
+.page-desc{font-size:var(--text-lg);color:var(--text-secondary);max-width:580px;line-height:1.65;margin-bottom:20px}
+.page-tags{display:flex;flex-wrap:wrap;gap:8px}
+.section-header{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;margin-top:56px}
+.section-num{font-family:var(--font-mono);font-size:11px;color:var(--topic-color);opacity:.7;min-width:28px}
+.section-name{font-size:var(--text-xl);font-weight:400;color:var(--text-primary)}
+.subsection{font-family:var(--font-mono);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.14em;color:var(--text-muted);margin-top:32px;margin-bottom:12px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted);text-decoration:none;transition:color .15s;margin-bottom:32px}
+.back-link:hover{color:var(--accent)}
+.page-footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--border-dim);font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.14em}
+.body-text{font-size:var(--text-md);color:var(--text-primary);line-height:1.8}
+.body-secondary{font-size:var(--text-base);color:var(--text-secondary);line-height:1.75}
+.mt-4{margin-top:16px}.mt-6{margin-top:24px}.mt-8{margin-top:32px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.topic-list{display:flex;flex-direction:column;gap:8px;padding:0;list-style:none}
+.topic-list li{display:flex;gap:10px;font-size:var(--text-base);color:var(--text-secondary);line-height:1.65}
+.topic-list li::before{content:'—';color:var(--topic-color);font-family:var(--font-mono);flex-shrink:0}
+.topic-list li strong{color:var(--text-primary)}
+.steps-list{display:flex;flex-direction:column;gap:10px;counter-reset:steps;padding:0;list-style:none}
+.steps-list li{counter-increment:steps;display:flex;gap:12px;font-size:var(--text-base);color:var(--text-secondary);line-height:1.65}
+.steps-list li::before{content:counter(steps);font-family:var(--font-mono);font-size:10px;color:var(--topic-color);background:var(--bg-elevated);border:1px solid var(--border-mid);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.steps-list li strong{color:var(--text-primary)}
+.line-row{display:flex;flex-direction:column;gap:10px}
+.line-item{display:flex;align-items:flex-start;gap:16px;background:var(--bg-elevated);border:1px solid var(--border-dim);border-radius:var(--r-lg);padding:14px 16px}
+.line-badge{font-family:var(--font-mono);font-size:var(--text-sm);font-weight:700;min-width:48px;padding-top:1px}
+.line-body{flex:1}
+.line-title{font-size:var(--text-base);font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.line-desc{font-size:var(--text-sm);color:var(--text-secondary);line-height:1.55}
+.toc-sidebar{position:fixed;top:50%;right:24px;transform:translateY(-50%);display:flex;flex-direction:column;gap:4px;z-index:100}
+.toc-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;text-decoration:none;position:relative}
+.toc-dot{width:6px;height:6px;border-radius:50%;background:var(--border-mid);flex-shrink:0;transition:background .2s,transform .2s;margin-left:auto}
+.toc-label{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);white-space:nowrap;opacity:0;transform:translateX(6px);transition:opacity .2s,transform .2s;pointer-events:none;text-align:right}
+.toc-sidebar:hover .toc-label{opacity:1;transform:translateX(0)}
+.toc-item:hover .toc-dot,.toc-item.active .toc-dot{background:var(--accent);transform:scale(1.5)}
+.toc-item:hover .toc-label,.toc-item.active .toc-label{color:var(--accent)}
+@media (max-width:1100px){.toc-sidebar{display:none}}
+.widget-wrap{background:var(--bg-surface);border:1px solid var(--border-dim);border-radius:var(--r-xl);overflow:hidden;margin:24px 0}
+.widget-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-dim);background:var(--bg-elevated);font-family:var(--font-mono);font-size:11px;color:var(--text-muted)}
+.live-badge{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:4px;animation:pulse-badge 2s ease-in-out infinite}
+.live-badge.manual{background:var(--accent);color:#0d0f10}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.6}}
+.widget-body{padding:20px 18px}
+.btn{font-family:var(--font-mono);font-size:11px;padding:6px 13px;border-radius:var(--r-md);border:1px solid var(--border-mid);background:var(--bg-elevated);color:var(--text-primary);cursor:pointer;transition:all .18s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:rgba(245,166,35,.12);border-color:var(--accent);color:var(--accent)}
+.btn.danger{background:rgba(255,74,74,.08);border-color:var(--danger);color:var(--danger)}
+.btn.green{background:rgba(0,208,132,.08);border-color:var(--rising);color:var(--rising)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-dim)}
+
+/* Ohm triangle */
+.ohm-triangle-wrap{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.ohm-svg-box{flex-shrink:0}
+.ohm-formula-list{flex:1;min-width:220px;display:flex;flex-direction:column;gap:10px}
+.ohm-formula-card{background:var(--bg-elevated);border:1px solid var(--border-dim);border-radius:var(--r-lg);padding:10px 14px;font-family:var(--font-mono);font-size:15px;display:flex;align-items:center;justify-content:space-between}
+.ohm-formula-card .lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* Calculator widget */
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.calc-field{display:flex;flex-direction:column;gap:6px;background:var(--bg-elevated);border:1px solid var(--border-dim);border-radius:var(--r-lg);padding:12px 14px;transition:border-color .2s}
+.calc-field.locked{border-color:var(--accent);background:var(--accent-glow)}
+.calc-field label{font-family:var(--font-mono);font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;display:flex;justify-content:space-between}
+.calc-field input{background:transparent;border:none;color:var(--text-primary);font-family:var(--font-mono);font-size:20px;width:100%;outline:none}
+.calc-field .unit{color:var(--text-muted);font-size:11px}
+.calc-lock-btn{font-family:var(--font-mono);font-size:9px;background:none;border:1px solid var(--border-mid);color:var(--text-muted);border-radius:3px;padding:1px 6px;cursor:pointer}
+.calc-lock-btn.on{border-color:var(--accent);color:var(--accent)}
+.calc-power-row{margin-top:12px;display:flex;gap:12px;flex-wrap:wrap}
+.calc-power-box{flex:1;min-width:120px;background:var(--bg-base);border:1px solid var(--border-dim);border-radius:var(--r-md);padding:8px 12px;text-align:center}
+.calc-power-val{font-family:var(--font-mono);font-size:16px;color:var(--rising);font-weight:600}
+.calc-power-label{font-family:var(--font-mono);font-size:8px;color:var(--text-muted);letter-spacing:.06em;margin-top:2px}
+
+/* Series / parallel viz */
+.circ-row{display:flex;gap:16px;flex-wrap:wrap}
+.circ-col{flex:1;min-width:220px}
+.circ-label{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="page-top-line"></div>
+
+<nav class="toc-sidebar" id="toc-sidebar">
+  <a class="toc-item" href="#s01"><span class="toc-label">Визначення</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s02"><span class="toc-label">Формули</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s03"><span class="toc-label">Калькулятор</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s04"><span class="toc-label">Потужність</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s05"><span class="toc-label">Послідовно/паралельно</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s06"><span class="toc-label">Опір провідника</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s07"><span class="toc-label">Код</span><span class="toc-dot"></span></a>
+  <a class="toc-item" href="#s08"><span class="toc-label">Q&A</span><span class="toc-dot"></span></a>
+</nav>
+
+<div class="page-wrap">
+
+  <a class="back-link" href="../index.html">← повернутись до конспекту</a>
+
+  <header class="page-header" id="s01">
+    <div class="page-eyebrow">Конспект · Electronics Basics</div>
+    <h1 class="page-title">Закон<br/><span class="page-title-accent">Ома</span></h1>
+    <p class="page-desc">
+      Фундаментальне співвідношення між напругою, струмом та опором у електричному колі.
+      Сформульований Георгом Омом у 1827 році — основа аналізу будь-якого електричного кола, від простого резистора до складної схеми.
+    </p>
+    <div class="page-tags">
+      <span class="badge badge-rising badge-pill">learnt</span>
+      <span class="badge badge-neutral badge-pill">DC Circuits</span>
+      <span class="badge badge-neutral badge-pill">Arduino</span>
+      <span class="badge badge-neutral badge-pill">Resistors</span>
+      <span class="badge badge-accent badge-pill">U = I·R</span>
+    </div>
+  </header>
+
+  <!-- 01 — ВИЗНАЧЕННЯ -->
+  <div class="section-header">
+    <span class="section-num">01 —</span>
+    <span class="section-name">Визначення</span>
+  </div>
+
+  <p class="body-text">
+    <strong>Закон Ома</strong> стверджує: сила струму <em>I</em>, що протікає через провідник, прямо пропорційна напрузі <em>U</em> на його кінцях і обернено пропорційна опору <em>R</em> провідника. Опір — це міра того, наскільки матеріал «чинить опір» проходженню заряду.
+  </p>
+
+  <div class="mt-8">
+    <div class="callout callout-important">
+      <span class="callout-icon">KEY</span>
+      <div>
+        <strong>Аналогія з водою:</strong> Напруга — це тиск води у трубі, струм — швидкість потоку води, опір — звуження труби. Більший тиск (U) штовхає більше води (I) через ту саму трубу. Вужча труба (більший R) пропускає менше води при тому самому тиску.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 02 — ФОРМУЛИ -->
+  <div class="section-header" id="s02">
+    <span class="section-num">02 —</span>
+    <span class="section-name">Формули та трикутник Ома</span>
+  </div>
+
+  <p class="body-secondary">
+    Базова формула <span class="ic">U = I × R</span> має ще два похідні варіанти. Закривши пальцем потрібну величину у трикутнику — отримуєш формулу для її обчислення.
+  </p>
+
+  <div class="mt-6 waveform-demo">
+    <div class="waveform-header">
+      <span class="waveform-title">Трикутник Ома — U / I / R</span>
+      <span class="badge badge-accent badge-pill" style="font-size:9px">U = I·R</span>
+    </div>
+    <div class="waveform-body">
+      <div class="ohm-triangle-wrap">
+        <div class="ohm-svg-box">
+          <svg width="220" height="200" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="110,15 15,185 205,185" fill="rgba(245,166,35,0.05)" stroke="rgba(245,166,35,0.4)" stroke-width="2"/>
+            <line x1="15" y1="118" x2="205" y2="118" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <line x1="76" y1="185" x2="143" y2="68" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+            <text x="110" y="90" text-anchor="middle" font-family="JetBrains Mono" font-size="26" font-weight="700" fill="#f5a623">U</text>
+            <text x="60" y="160" text-anchor="middle" font-family="JetBrains Mono" font-size="26" font-weight="700" fill="#4a9eff">I</text>
+            <text x="160" y="160" text-anchor="middle" font-family="JetBrains Mono" font-size="26" font-weight="700" fill="#00d084">R</text>
+            <text x="110" y="40" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#52504a">Вольт, V</text>
+            <text x="48" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#52504a">Ампер, A</text>
+            <text x="172" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#52504a">Ом, Ω</text>
+          </svg>
+        </div>
+        <div class="ohm-formula-list">
+          <div class="ohm-formula-card">
+            <span><span style="color:var(--accent)">U</span> = <span style="color:var(--clk)">I</span> × <span style="color:var(--rising)">R</span></span>
+            <span class="lbl">напруга</span>
+          </div>
+          <div class="ohm-formula-card">
+            <span><span style="color:var(--clk)">I</span> = <span style="color:var(--accent)">U</span> / <span style="color:var(--rising)">R</span></span>
+            <span class="lbl">струм</span>
+          </div>
+          <div class="ohm-formula-card">
+            <span><span style="color:var(--rising)">R</span> = <span style="color:var(--accent)">U</span> / <span style="color:var(--clk)">I</span></span>
+            <span class="lbl">опір</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 table-wrap">
+    <table class="kit-table">
+      <thead><tr><th>Величина</th><th>Позначення</th><th>Одиниця</th><th>Опис</th></tr></thead>
+      <tbody>
+        <tr><td class="mono accent">Напруга</td><td class="mono">U (V)</td><td style="color:var(--text-muted);font-family:var(--font-mono)">Вольт, В</td><td>Різниця потенціалів — «тиск», що штовхає заряд через коло.</td></tr>
+        <tr><td class="mono accent">Струм</td><td class="mono">I (A)</td><td style="color:var(--text-muted);font-family:var(--font-mono)">Ампер, А</td><td>Кількість заряду, що проходить через переріз провідника за секунду.</td></tr>
+        <tr><td class="mono accent">Опір</td><td class="mono">R (Ω)</td><td style="color:var(--text-muted);font-family:var(--font-mono)">Ом, Ω</td><td>Властивість матеріалу протидіяти проходженню струму.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- 03 — КАЛЬКУЛЯТОР -->
+  <div class="section-header" id="s03">
+    <span class="section-num">03 —</span>
+    <span class="section-name">Інтерактивний калькулятор</span>
+  </div>
+
+  <p class="body-secondary">
+    Введіть будь-які дві величини — третя розрахується автоматично. Натисніть на замок 🔒 біля поля, щоб «заблокувати» його як те, що потрібно знайти (решта два — відомі).
+  </p>
+
+  <div class="widget-wrap">
+    <div class="widget-header">
+      <span>▶ LIVE · Ohm's Law Calculator</span>
+      <span class="live-badge manual">U = I × R</span>
+    </div>
+    <div class="widget-body">
+
+      <div class="calc-grid">
+        <div class="calc-field" id="cf-u">
+          <label>Напруга U <button class="calc-lock-btn" id="lock-u" onclick="ohmLock('u')">🔓</button></label>
+          <input type="number" id="in-u" value="12" oninput="ohmCalc('u')"/>
+          <span class="unit">Вольт (V)</span>
+        </div>
+        <div class="calc-field" id="cf-i">
+          <label>Струм I <button class="calc-lock-btn" id="lock-i" onclick="ohmLock('i')">🔓</button></label>
+          <input type="number" id="in-i" value="2" oninput="ohmCalc('i')"/>
+          <span class="unit">Ампер (A)</span>
+        </div>
+        <div class="calc-field" id="cf-r">
+          <label>Опір R <button class="calc-lock-btn" id="lock-r" onclick="ohmLock('r')">🔓</button></label>
+          <input type="number" id="in-r" value="6" oninput="ohmCalc('r')"/>
+          <span class="unit">Ом (Ω)</span>
+        </div>
+      </div>
+
+      <div class="calc-power-row">
+        <div class="calc-power-box">
+          <div class="calc-power-val" id="calc-p">24</div>
+          <div class="calc-power-label">ПОТУЖНІСТЬ, P = U·I (Вт)</div>
+        </div>
+        <div class="calc-power-box">
+          <div class="calc-power-val" id="calc-energy" style="color:var(--clk)">24</div>
+          <div class="calc-power-label">ЕНЕРГІЯ ЗА 1 ГОД (Вт·год)</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn primary" onclick="ohmReset()">↺ Скинути приклад</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 04 — ПОТУЖНІСТЬ -->
+  <div class="section-header" id="s04">
+    <span class="section-num">04 —</span>
+    <span class="section-name">Потужність</span>
+  </div>
+
+  <p class="body-secondary">
+    Електрична потужність <span class="ic">P = U × I</span> показує, скільки енергії розсіюється (зазвичай у вигляді тепла) за секунду. Підставивши закон Ома, отримуємо ще дві корисні форми — зручні, коли відоме лише одне з U/I.
+  </p>
+
+  <div class="mt-6 stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">P = U × I</div>
+      <div class="stat-value">Вт</div>
+      <div class="stat-sub">базова формула</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">P = I² × R</div>
+      <div class="stat-value">Вт</div>
+      <div class="stat-sub">коли відомий струм</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">P = U² / R</div>
+      <div class="stat-value">Вт</div>
+      <div class="stat-sub">коли відома напруга</div>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <div class="callout callout-warning">
+      <span class="callout-icon">WRN</span>
+      <div><strong>Резистор має номінальну потужність</strong> (зазвичай 1/8–1 Вт у дрібних SMD/THT резисторах). Якщо розрахована P перевищує номінал — резистор перегріється і вийде з ладу. Завжди перевіряй P = I²×R перед вибором резистора в схему.</div>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <div class="callout callout-danger">
+      <span class="callout-icon">ERR</span>
+      <div>
+        <strong>Derating (зниження номіналу):</strong> Номінальна потужність резистора (наприклад 0.25 Вт) вказана при температурі довкілля ~25–70°C. При вищій температурі допустиму потужність зменшують за derating-кривою з даташита — зазвичай лінійно до нуля при максимальній робочій температурі (~125–155°C). Типове правило для практики: <strong>не навантажуй резистор більш ніж на 50% від номіналу</strong> — це дає запас на нагрів від сусідніх компонентів, погану вентиляцію та довготривалу надійність (менше дрейфу опору, довший термін служби).
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 05 — ПОСЛІДОВНО / ПАРАЛЕЛЬНО -->
+  <div class="section-header" id="s05">
+    <span class="section-num">05 —</span>
+    <span class="section-name">Послідовне та паралельне з'єднання</span>
+  </div>
+
+  <p class="body-secondary">
+    Закон Ома застосовується до кожної ділянки кола окремо, тому загальний опір залежить від того, як з'єднані резистори.
+  </p>
+
+  <div class="circ-row mt-6">
+    <div class="circ-col">
+      <div class="circ-label" style="color:var(--accent)">Послідовно</div>
+      <div class="waveform-demo">
+        <div class="waveform-body">
+          <svg width="100%" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg">
+            <line x1="10" y1="45" x2="50" y2="45" stroke="#52504a" stroke-width="2"/>
+            <rect x="50" y="30" width="50" height="30" rx="3" fill="rgba(245,166,35,0.12)" stroke="#f5a623" stroke-width="1.5"/>
+            <text x="75" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#f5a623">R1</text>
+            <line x1="100" y1="45" x2="135" y2="45" stroke="#52504a" stroke-width="2"/>
+            <rect x="135" y="30" width="50" height="30" rx="3" fill="rgba(0,208,132,0.12)" stroke="#00d084" stroke-width="1.5"/>
+            <text x="160" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#00d084">R2</text>
+            <line x1="185" y1="45" x2="220" y2="45" stroke="#52504a" stroke-width="2"/>
+            <rect x="220" y="30" width="50" height="30" rx="3" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="245" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#4a9eff">R3</text>
+            <text x="140" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#52504a">той самий I через усі</text>
+          </svg>
+        </div>
+      </div>
+      <div class="ohm-formula-card mt-4">
+        <span>R<sub>заг</sub> = R1 + R2 + R3</span>
+        <span class="lbl">опір сумується</span>
+      </div>
+      <p class="body-secondary mt-4" style="font-size:13px">Струм однаковий через всі елементи. Напруга ділиться пропорційно опору кожного резистора (дільник напруги).</p>
+    </div>
+
+    <div class="circ-col">
+      <div class="circ-label" style="color:var(--rising)">Паралельно</div>
+      <div class="waveform-demo">
+        <div class="waveform-body">
+          <svg width="100%" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg">
+            <line x1="10" y1="55" x2="40" y2="55" stroke="#52504a" stroke-width="2"/>
+            <line x1="40" y1="20" x2="40" y2="90" stroke="#52504a" stroke-width="2"/>
+            <line x1="240" y1="20" x2="240" y2="90" stroke="#52504a" stroke-width="2"/>
+            <line x1="240" y1="55" x2="270" y2="55" stroke="#52504a" stroke-width="2"/>
+
+            <line x1="40" y1="20" x2="95" y2="20" stroke="#52504a" stroke-width="2"/>
+            <rect x="95" y="5" width="50" height="30" rx="3" fill="rgba(245,166,35,0.12)" stroke="#f5a623" stroke-width="1.5"/>
+            <text x="120" y="25" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#f5a623">R1</text>
+            <line x1="145" y1="20" x2="240" y2="20" stroke="#52504a" stroke-width="2"/>
+
+            <line x1="40" y1="55" x2="95" y2="55" stroke="#52504a" stroke-width="2"/>
+            <rect x="95" y="40" width="50" height="30" rx="3" fill="rgba(0,208,132,0.12)" stroke="#00d084" stroke-width="1.5"/>
+            <text x="120" y="60" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#00d084">R2</text>
+            <line x1="145" y1="55" x2="240" y2="55" stroke="#52504a" stroke-width="2"/>
+
+            <line x1="40" y1="90" x2="95" y2="90" stroke="#52504a" stroke-width="2"/>
+            <rect x="95" y="75" width="50" height="30" rx="3" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="120" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#4a9eff">R3</text>
+            <line x1="145" y1="90" x2="240" y2="90" stroke="#52504a" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="ohm-formula-card mt-4">
+        <span>1/R<sub>заг</sub> = 1/R1 + 1/R2 + 1/R3</span>
+        <span class="lbl">обернені сумуються</span>
+      </div>
+      <p class="body-secondary mt-4" style="font-size:13px">Напруга однакова на кожній гілці. Струм ділиться обернено пропорційно опору — більше тече через менший R.</p>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <div class="callout callout-info">
+      <span class="callout-icon">INF</span>
+      <div><strong>Для двох резисторів паралельно</strong> є зручна спрощена формула: R<sub>заг</sub> = (R1 × R2) / (R1 + R2) — «добуток на суму».</div>
+    </div>
+  </div>
+
+  <div class="mt-6 grid-2">
+    <div class="ohm-formula-card">
+      <span>2× R послідовно → R<sub>заг</sub> = 2R</span>
+      <span class="lbl">сума</span>
+    </div>
+    <div class="ohm-formula-card">
+      <span>2× R паралельно → R<sub>заг</sub> = R / 2</span>
+      <span class="lbl">половина</span>
+    </div>
+  </div>
+  <p class="body-secondary mt-4">
+    Окремий випадок, який легко тримати в голові: <strong>два однакові резистори</strong> R, з'єднані послідовно, дають подвоєний опір (2R), а з'єднані паралельно — половину опору (R/2). Це випливає з загальних формул, але корисно знати напам'ять для швидкої прикидки в голові без калькулятора.
+  </p>
+
+
+  <!-- 06 — ОПІР ПРОВІДНИКА -->
+  <div class="section-header" id="s06">
+    <span class="section-num">06 —</span>
+    <span class="section-name">Опір провідника та температура</span>
+  </div>
+
+  <p class="body-secondary">
+    Опір самого провідника залежить від матеріалу, довжини, перерізу та температури:
+  </p>
+
+  <div class="mt-4 ohm-formula-card" style="max-width:300px">
+    <span>R = ρ × L / A</span>
+    <span class="lbl">провідник</span>
+  </div>
+
+  <ul class="topic-list mt-6">
+    <li><strong>ρ (питомий опір)</strong> — властивість матеріалу (мідь ≈ 1.68×10⁻⁸ Ω·м, алюміній вищий, срібло нижчий).</li>
+    <li><strong>L (довжина)</strong> — опір прямо пропорційний довжині: довший провід → більший опір.</li>
+    <li><strong>A (площа перерізу)</strong> — опір обернено пропорційний площі: товстіший провід → менший опір.</li>
+    <li><strong>Температура</strong> — у більшості металів опір зростає з температурою (позитивний температурний коефіцієнт). У напівпровідників — навпаки.</li>
+  </ul>
+
+  <div class="mt-6">
+    <div class="callout callout-danger">
+      <span class="callout-icon">ERR</span>
+      <div><strong>Закон Ома виконується не завжди.</strong> Він справедливий лише для «омічних» елементів (резистори, провідники за сталої температури). Діоди, транзистори, лампи розжарювання — нелінійні: їхній опір змінюється залежно від прикладеної напруги/струму, графік U(I) не є прямою лінією.</div>
+    </div>
+  </div>
+
+
+  <!-- 07 — КОД -->
+  <div class="section-header" id="s07">
+    <span class="section-num">07 —</span>
+    <span class="section-name">Код — вимірювання струму через резистор-шунт</span>
+  </div>
+
+  <div class="code-block">
+    <div class="code-block-header">
+      <span class="code-block-lang">C · STM32 HAL — вимірювання струму через шунт (закон Ома)</span>
+      <button class="code-block-copy">copy</button>
+    </div>
+    <pre class="code-block-body"><span class="cm">/* Вимірюємо падіння напруги на шунтовому резисторі через АЦП
+   і обчислюємо струм по закону Ома: I = U / R */</span>
+
+#include <span class="str">"main.h"</span>
+
+<span class="kw">#define</span> SHUNT_R      <span class="num">0.1f</span>     <span class="cm">// опір шунта, Ом</span>
+<span class="kw">#define</span> VREF         <span class="num">3.3f</span>     <span class="cm">// опорна напруга АЦП, В</span>
+<span class="kw">#define</span> ADC_RES      <span class="num">4095.0f</span>  <span class="cm">// 12-бітний АЦП</span>
+
+ADC_HandleTypeDef hadc1;
+UART_HandleTypeDef huart2;
+
+<span class="kw">static</span> <span class="kw">float</span> <span class="fn">adc_to_voltage</span>(<span class="kw">uint32_t</span> raw) {
+    <span class="kw">return</span> ((<span class="kw">float</span>)raw / ADC_RES) * VREF;
+}
+
+<span class="kw">void</span> <span class="fn">MeasureShuntCurrent</span>(<span class="kw">void</span>) {
+    <span class="kw">uint32_t</span> raw;
+
+    <span class="fn">HAL_ADC_Start</span>(&hadc1);
+    <span class="kw">if</span> (<span class="fn">HAL_ADC_PollForConversion</span>(&hadc1, <span class="num">10</span>) == HAL_OK) {
+        raw = <span class="fn">HAL_ADC_GetValue</span>(&hadc1);
+    } <span class="kw">else</span> {
+        raw = <span class="num">0</span>;
+    }
+    <span class="fn">HAL_ADC_Stop</span>(&hadc1);
+
+    <span class="kw">float</span> u_shunt = <span class="fn">adc_to_voltage</span>(raw);     <span class="cm">// напруга на шунті, В</span>
+
+    <span class="cm">/* Закон Ома: I = U / R */</span>
+    <span class="kw">float</span> current = u_shunt / SHUNT_R;          <span class="cm">// струм, А</span>
+
+    <span class="cm">/* Потужність, що розсіюється на шунті: P = U × I = I² × R */</span>
+    <span class="kw">float</span> power = u_shunt * current;
+
+    <span class="kw">char</span> msg[<span class="num">96</span>];
+    <span class="kw">int</span> len = <span class="fn">snprintf</span>(msg, <span class="kw">sizeof</span>(msg),
+        <span class="str">"U=%.4f V  I=%.4f A  P=%.4f W\r\n"</span>,
+        u_shunt, current, power);
+
+    <span class="fn">HAL_UART_Transmit</span>(&huart2, (<span class="kw">uint8_t</span>*)msg, len, HAL_MAX_DELAY);
+}
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    <span class="fn">HAL_Init</span>();
+    <span class="fn">SystemClock_Config</span>();
+    <span class="fn">MX_GPIO_Init</span>();
+    <span class="fn">MX_ADC1_Init</span>();
+    <span class="fn">MX_USART2_UART_Init</span>();
+
+    <span class="kw">while</span> (<span class="num">1</span>) {
+        <span class="fn">MeasureShuntCurrent</span>();
+        <span class="fn">HAL_Delay</span>(<span class="num">500</span>);
+    }
+}</pre>
+  </div>
+
+
+
+
+  <!-- 08 — Q&A -->
+  <div class="section-header" id="s08">
+    <span class="section-num">08 —</span>
+    <span class="section-name">Питання на співбесіді</span>
+  </div>
+
+  <div class="accordion">
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Сформулюйте закон Ома та запишіть формулу</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Сила струму в провіднику прямо пропорційна напрузі на його кінцях і обернено пропорційна опору провідника: <strong>I = U / R</strong>, або у звичній формі <strong>U = I × R</strong>.</p>
+          <p>Закон справедливий для омічних (лінійних) елементів за сталої температури — резисторів, провідників. Для нелінійних елементів (діод, лампа розжарювання) це співвідношення не є прямою лінією.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Чому опір провідника зростає при нагріванні?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>У металах носії заряду — вільні електрони, що рухаються між атомами кристалічної решітки. При нагріванні атоми коливаються інтенсивніше, частіше «заважаючи» руху електронів — це збільшує опір.</p>
+          <p>Цей ефект описують через температурний коефіцієнт опору α: R(T) = R₀ × (1 + α × ΔT). У напівпровідників навпаки — з ростом температури звільняється більше носіїв заряду, тому опір падає.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Чим відрізняється послідовне з'єднання резисторів від паралельного?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p><strong>Послідовно:</strong> резистори з'єднані «в ланцюжок», через них тече однаковий струм. Загальний опір — це сума опорів: R = R1+R2+...; загальний опір завжди більший за найбільший окремий резистор.</p>
+          <p><strong>Паралельно:</strong> резистори з'єднані «гілками» між тими ж двома вузлами, напруга на них однакова. Обернені опори сумуються: 1/R = 1/R1+1/R2+...; загальний опір завжди менший за найменший окремий резистор.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Як обчислити потужність, якщо відомі лише струм і опір (без напруги)?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Базова формула P = U × I. Підставивши U = I × R, отримуємо <strong>P = I² × R</strong>.</p>
+          <p>Якщо ж відома лише напруга й опір, підставляють I = U/R та отримують <strong>P = U² / R</strong>. Всі три формули еквівалентні і дають однаковий результат — обирай ту, для якої відомі величини у задачі.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-trigger" onclick="toggleAccordion(this)">
+        <span>Чому при короткому замиканні струм різко зростає?</span>
+        <span class="accordion-icon">+</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <p>Коротке замикання — це з'єднання двох точок кола провідником з опором, що прямує до нуля (R → 0). За законом Ома I = U / R: коли R стає дуже малим при тій самій напрузі джерела, струм I стає дуже великим — обмежується вже лише внутрішнім опором джерела живлення та провідників.</p>
+          <p>Великий струм виділяє велику потужність (P = I²R) у дротах і компонентах — звідси перегрів, пожежі, вихід з ладу. Тому в реальних схемах обов'язково ставлять запобіжники або обмежувачі струму.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /accordion -->
+
+  <div class="page-footer">
+    // Конспект · Electronics Basics · Закон Ома · physics/ohms-law.html
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+const tocItems = document.querySelectorAll('.toc-item');
+const sections = ['s01','s02','s03','s04','s05','s06','s07','s08'];
+function updateTOC(){
+  let active=0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const rect=el.getBoundingClientRect();
+    if(rect.top<=120) active=i;
+  });
+  tocItems.forEach((item,i)=>item.classList.toggle('active', i===active));
+}
+window.addEventListener('scroll', updateTOC, {passive:true});
+updateTOC();
+
+function toggleAccordion(btn){
+  const body=btn.nextElementSibling;
+  const isOpen=btn.classList.contains('open');
+  document.querySelectorAll('.accordion-trigger.open').forEach(b=>{
+    b.classList.remove('open'); b.nextElementSibling.classList.remove('open');
+  });
+  if(!isOpen){ btn.classList.add('open'); body.classList.add('open'); }
+}
+
+document.querySelectorAll('.code-block-copy').forEach(btn=>{
+  btn.addEventListener('click', function(){
+    const code=this.closest('.code-block').querySelector('.code-block-body').innerText;
+    navigator.clipboard.writeText(code).catch(()=>{});
+    const orig=this.textContent;
+    this.textContent='copied!'; this.style.color='var(--accent)';
+    setTimeout(()=>{ this.textContent=orig; this.style.color=''; }, 1500);
+  });
+});
+
+/* Ohm calculator */
+let ohmLocked = 'r'; // which field stays fixed when other two change
+
+function ohmLock(field){
+  ohmLocked = field;
+  ['u','i','r'].forEach(f=>{
+    document.getElementById('lock-'+f).textContent = (f===field) ? '🔒' : '🔓';
+    document.getElementById('lock-'+f).classList.toggle('on', f===field);
+    document.getElementById('cf-'+f).classList.toggle('locked', f===field);
+  });
+}
+ohmLock('r');
+
+function ohmCalc(changed){
+  const u = parseFloat(document.getElementById('in-u').value);
+  const i = parseFloat(document.getElementById('in-i').value);
+  const r = parseFloat(document.getElementById('in-r').value);
+
+  // recompute the locked field based on the other two (unless the locked one was itself just edited)
+  let target = ohmLocked;
+  if (changed === ohmLocked) {
+    // user edited the locked field directly -> just unlock dependency, recompute a different one (pick changed!=target)
+    target = (changed === 'u') ? 'i' : (changed === 'i') ? 'u' : 'u';
+  }
+
+  if (target === 'u') {
+    const val = i * r;
+    if (isFinite(val)) document.getElementById('in-u').value = round4(val);
+  } else if (target === 'i') {
+    const val = r !== 0 ? u / r : 0;
+    if (isFinite(val)) document.getElementById('in-i').value = round4(val);
+  } else if (target === 'r') {
+    const val = i !== 0 ? u / i : 0;
+    if (isFinite(val)) document.getElementById('in-r').value = round4(val);
+  }
+
+  updatePower();
+}
+
+function round4(v){ return Math.round(v*10000)/10000; }
+
+function updatePower(){
+  const u = parseFloat(document.getElementById('in-u').value) || 0;
+  const i = parseFloat(document.getElementById('in-i').value) || 0;
+  const p = u * i;
+  document.getElementById('calc-p').textContent = round4(p);
+  document.getElementById('calc-energy').textContent = round4(p);
+}
+
+function ohmReset(){
+  document.getElementById('in-u').value = 12;
+  document.getElementById('in-i').value = 2;
+  document.getElementById('in-r').value = 6;
+  ohmLock('r');
+  updatePower();
+}
+
+updatePower();
+</script>
+</body>
+</html>
