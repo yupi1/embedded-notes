@@ -127,7 +127,7 @@
     .accordion-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-mid); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-secondary); transition: transform 0.25s, border-color 0.2s, color 0.2s; margin-top: 2px; }
     .accordion-trigger.open .accordion-icon { transform: rotate(45deg); border-color: var(--accent); color: var(--accent); }
     .accordion-body { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; background: var(--accent-glow); }
-    .accordion-body.open { max-height: 800px; }
+    .accordion-body.open { max-height: 900px; }
     .accordion-content { padding: 4px 20px 20px; color: var(--text-secondary); font-size: var(--text-base); line-height: 1.7; border-top: 1px solid var(--border-dim); }
     .accordion-content strong { color: var(--text-primary); font-weight: 500; }
 
@@ -208,7 +208,6 @@
     .stack { display: flex; flex-direction: column; gap: 12px; }
     .divider { height: 1px; background: var(--border-dim); margin: 40px 0; }
 
-    /* ══ TOPIC-LIST / STEPS-LIST ══ */
     .topic-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
     .topic-list li { display: flex; gap: 10px; color: var(--text-secondary); font-size: var(--text-base); }
     .topic-list li::before { content: '—'; color: var(--topic-color); font-family: var(--font-mono); flex-shrink: 0; }
@@ -216,22 +215,59 @@
     .steps-list li { counter-increment: steps; display: flex; gap: 12px; color: var(--text-secondary); font-size: var(--text-base); }
     .steps-list li::before { content: counter(steps); font-family: var(--font-mono); font-size: 10px; color: var(--topic-color); background: var(--accent-dim); border: 1px solid rgba(0,208,132,0.2); border-radius: 3px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
 
-    /* ══ DEF-CARDS ══ */
     .def-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .def-card { background: var(--bg-elevated); border: 1px solid var(--border-dim); border-radius: var(--r-lg); padding: 16px; }
     .def-card-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
     .def-card-value { font-size: var(--text-base); color: var(--text-secondary); line-height: 1.6; }
     .def-card-value strong { color: var(--text-primary); }
 
+    /* Signal type detail cards */
+    .signal-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .signal-type-card { background: var(--bg-elevated); border: 1px solid var(--border-dim); border-radius: var(--r-xl); overflow: hidden; transition: border-color 0.2s; }
+    .signal-type-card:hover { border-color: var(--border-mid); }
+    .signal-type-card-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--border-dim); }
+    .signal-type-card-title { font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
+    .signal-type-card-sub { font-size: var(--text-xs); color: var(--text-muted); font-family: var(--font-mono); }
+    .signal-type-canvas-wrap { padding: 10px 12px 8px; }
+    .signal-type-props { padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 6px; }
+    .signal-type-prop { display: flex; gap: 8px; font-size: var(--text-xs); align-items: flex-start; }
+    .signal-type-prop::before { content: '·'; color: var(--topic-color); font-family: var(--font-mono); flex-shrink: 0; line-height: 1.6; }
+    .signal-type-prop span { color: var(--text-secondary); line-height: 1.6; }
+    .signal-type-prop strong { color: var(--text-primary); }
+
+    /* Schmitt trigger / transition visual */
+    .transition-note {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-dim);
+      border-left: 3px solid var(--warning);
+      border-radius: var(--r-lg);
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .transition-note strong { color: var(--text-primary); }
+
+    .discrete-demo {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-dim);
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      color: var(--rising);
+      letter-spacing: 0.08em;
+    }
+
     @media (max-width: 600px) {
       .page-wrap { padding: 32px 20px 80px; }
       .def-cards { grid-template-columns: 1fr; }
       .grid-2 { grid-template-columns: 1fr; }
+      .signal-type-grid { grid-template-columns: 1fr; }
     }
 
     /* ══ INTERACTIVE ANIMATIONS ══ */
-
-    /* Canvas container */
     .anim-wrap {
       background: var(--bg-surface);
       border: 1px solid var(--border-dim);
@@ -259,7 +295,6 @@
     .anim-body { padding: 16px; }
     canvas { display: block; width: 100%; border-radius: var(--r-md); }
 
-    /* Slider controls */
     .slider-row {
       display: flex; align-items: center; gap: 12px;
       margin-top: 12px; flex-wrap: wrap;
@@ -283,7 +318,6 @@
       box-shadow: 0 0 8px rgba(0,208,132,0.5);
     }
 
-    /* Signal type selector */
     .wave-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
     .wave-btn {
       font-family: var(--font-mono); font-size: 10px; padding: 4px 12px;
@@ -294,7 +328,6 @@
     .wave-btn:hover { color: var(--text-secondary); border-color: var(--border-mid); }
     .wave-btn.active { background: var(--accent-dim); border-color: rgba(0,208,132,0.3); color: var(--accent); }
 
-    /* Logic level indicator */
     .logic-indicator {
       display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap;
     }
@@ -314,7 +347,6 @@
     .logic-dot.high { border-color: rgba(0,208,132,0.3); color: var(--rising); }
     .logic-dot.low  { color: var(--text-muted); }
 
-    /* Analog vs Digital visual */
     .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
     @media (max-width: 520px) { .compare-grid { grid-template-columns: 1fr; } }
     .compare-card {
@@ -338,12 +370,10 @@
 
     <header class="page-header">
       <div class="page-eyebrow">Конспект · Electronics · Signal Fundamentals</div>
-      <h1 class="page-title">
-        Сигнал
-      </h1>
+      <h1 class="page-title">Сигнал</h1>
       <p class="page-desc">
         Сигнал — фундамент будь-якої електронної системи. Без розуміння типів, параметрів і форм сигналів
-        неможливо аналізувати фронти, шуми та поведінку мікроконтролера на рівні залізa.
+        неможливо аналізувати фронти, шуми та поведінку мікроконтролера на рівні заліза.
       </p>
       <div class="page-tags">
         <span class="badge badge-rising badge-pill">learnt</span>
@@ -388,21 +418,22 @@
 
 
     <!-- ══════════════════════════════════════════════
-         02 — ТИПИ СИГНАЛІВ (анімація аналог vs цифра)
+         02 — ТИПИ СИГНАЛІВ
     ══════════════════════════════════════════════ -->
     <div class="section-header">
       <span class="section-num">02 —</span>
       <span class="section-name">Типи сигналів</span>
     </div>
 
-    <p style="color:var(--text-secondary); font-size:var(--text-base); margin-bottom:16px;">
-      Два фундаментальні типи. Вся різниця — в тому, <em>які значення може приймати напруга</em>.
+    <p style="color:var(--text-secondary); font-size:var(--text-base); margin-bottom:16px; line-height:1.75;">
+      На фізичному рівні <strong style="color:var(--text-primary)">всі сигнали є аналоговими</strong> — будь-яка напруга або струм змінюються безперервно в часі.
+      Для спрощення обробки інформації сигнали умовно поділяють на <em>аналогові</em> та <em>цифрові</em>.
     </p>
 
-    <!-- Animated analog vs digital comparison -->
+    <!-- Animated analog vs digital -->
     <div class="anim-wrap">
       <div class="anim-header">
-        <span class="anim-title">Аналоговий vs Цифровий сигнал</span>
+        <span class="anim-title">Аналоговий vs Цифровий сигнал · live</span>
         <div class="anim-controls">
           <span class="badge badge-rising badge-pill" style="font-size:9px">аналоговий</span>
           <span class="badge badge-clk badge-pill" style="font-size:9px">цифровий</span>
@@ -425,15 +456,97 @@
       </div>
     </div>
 
+    <!-- Signal type detail cards -->
+    <div class="signal-type-grid">
+
+      <!-- Analog card -->
+      <div class="signal-type-card">
+        <div class="signal-type-card-head">
+          <div class="signal-type-card-title" style="color:var(--rising)">Аналоговий сигнал</div>
+          <div class="signal-type-card-sub">Analog Signal · будь-яке значення в діапазоні</div>
+        </div>
+        <div class="signal-type-canvas-wrap">
+          <canvas id="analogDetailCanvas" height="70"></canvas>
+        </div>
+        <div class="signal-type-props">
+          <div class="signal-type-prop"><span>Безперервно змінюється в часі</span></div>
+          <div class="signal-type-prop"><span>Нескінченна кількість значень у межах діапазону (наприклад, 0–5 В)</span></div>
+          <div class="signal-type-prop"><span>Чутливий до <strong>шумів та перешкод</strong></span></div>
+          <div class="signal-type-prop"><span>Передає фізичні величини: температуру, тиск, звук, освітленість</span></div>
+          <div class="signal-type-prop"><span>Зчитується через <code class="ic">ADC</code> — перетворення на число</span></div>
+        </div>
+        <div style="padding:0 16px 14px;">
+          <div class="discrete-demo" style="color:var(--rising)">0.10В → 0.12В → 0.15В → 0.17В → 0.18В → …</div>
+        </div>
+      </div>
+
+      <!-- Digital card -->
+      <div class="signal-type-card">
+        <div class="signal-type-card-head">
+          <div class="signal-type-card-title" style="color:var(--clk)">Цифровий сигнал</div>
+          <div class="signal-type-card-sub">Digital Signal · два логічні стани</div>
+        </div>
+        <div class="signal-type-canvas-wrap">
+          <canvas id="digitalDetailCanvas" height="70"></canvas>
+        </div>
+        <div class="signal-type-props">
+          <div class="signal-type-prop"><span><strong>HIGH (1)</strong> — логічна одиниця (~VDD)</span></div>
+          <div class="signal-type-prop"><span><strong>LOW (0)</strong> — логічний нуль (~GND)</span></div>
+          <div class="signal-type-prop"><span>Фізично реалізується аналоговою напругою, схема інтерпретує її через <strong>порогові рівні</strong></span></div>
+          <div class="signal-type-prop"><span>Використовується для бінарної інформації — GPIO, UART, SPI, I²C</span></div>
+          <div class="signal-type-prop"><span>Стійкіший до шумів, ніж аналоговий</span></div>
+        </div>
+        <div style="padding:0 16px 14px;">
+          <div class="discrete-demo" style="color:var(--clk)">0В → 0В → 3.3В → 3.3В → 0В → …</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Discrete signal note -->
+    <div class="mt-8">
+      <div class="callout callout-info">
+        <span class="callout-icon">INF</span>
+        <div>
+          <strong>Дискретний сигнал</strong> — проміжна форма. Він може приймати лише <em>визначені значення</em> (наприклад, 0 або 1, або набір фіксованих рівнів), але не обов'язково лише два.
+          Цифровий сигнал — окремий випадок дискретного з двома рівнями.
+        </div>
+      </div>
+    </div>
+
+    <!-- Transition / real signal note -->
+    <div class="mt-4">
+      <div class="transition-note">
+        <strong>⚠ Реальний перехід — не миттєвий</strong><br/>
+        На схемах цифровий сигнал зображають як ідеальний прямокутник — ніби перемикання між 0 та 1 відбувається миттєво.
+        Насправді під час перемикання завжди існує <strong>фронт сигналу</strong> (rise/fall time), де напруга плавно проходить через перехідну ділянку.
+        Саме тому існують пороги V_IH / V_IL і пристрої з гістерезисом — <strong>Schmitt Trigger</strong> (тригер Шмітта),
+        які перетворюють "брудний" аналоговий фронт на чіткий цифровий перехід.
+      </div>
+    </div>
+
+    <!-- Analog-to-digital conversion note -->
+    <div class="mt-4">
+      <div class="callout callout-important">
+        <span class="callout-icon">KEY</span>
+        <div>
+          <strong>Перетворення між типами.</strong> Для конвертації аналогового сигналу у цифровий використовують:
+          <strong>компаратори</strong> (порівнюють напругу з порогом), <strong>Schmitt Trigger</strong> (компаратор з гістерезисом),
+          та <code class="ic">ADC</code> (аналого-цифровий перетворювач — дає числове значення).
+          У зворотному напрямку — <code class="ic">DAC</code> або <strong>PWM + RC-фільтр</strong>.
+        </div>
+      </div>
+    </div>
+
     <div class="mt-8">
       <div class="def-cards">
         <div class="def-card">
           <div class="def-card-label" style="color:var(--rising)">Аналоговий</div>
-          <div class="def-card-value">Напруга приймає <strong>будь-яке неперервне значення</strong> в діапазоні. Приклад: мікрофон, термістор, <code class="ic">ADC</code> вхід STM32.</div>
+          <div class="def-card-value">Напруга приймає <strong>будь-яке неперервне значення</strong>. Приклад: мікрофон, термістор, <code class="ic">ADC</code> вхід STM32.</div>
         </div>
         <div class="def-card">
           <div class="def-card-label" style="color:var(--clk)">Цифровий</div>
-          <div class="def-card-value">Напруга приймає лише <strong>два рівні</strong>: HIGH або LOW. Приклад: GPIO, UART TX, SPI CLK.</div>
+          <div class="def-card-value">Напруга приймає лише <strong>HIGH або LOW</strong>. Приклад: GPIO, UART TX, SPI CLK. Перемикання — через фронт.</div>
         </div>
         <div class="def-card">
           <div class="def-card-label" style="color:var(--warning)">В мікроконтролері</div>
@@ -444,7 +557,7 @@
 
 
     <!-- ══════════════════════════════════════════════
-         03 — ПАРАМЕТРИ СИГНАЛУ (інтерактивна анімація)
+         03 — ПАРАМЕТРИ СИГНАЛУ
     ══════════════════════════════════════════════ -->
     <div class="section-header">
       <span class="section-num">03 —</span>
@@ -455,7 +568,6 @@
       Змінюй параметри нижче — і дивись як це впливає на форму сигналу в реальному часі.
     </p>
 
-    <!-- Interactive signal parameters -->
     <div class="anim-wrap">
       <div class="anim-header">
         <span class="anim-title">Інтерактивний генератор сигналу</span>
@@ -494,7 +606,6 @@
           <span class="slider-val" id="phaseVal">0<span style="font-size:10px;color:var(--text-muted)"> °</span></span>
         </div>
 
-        <!-- Live readouts -->
         <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
           <div class="stat-card" style="padding:10px 14px; flex:1; min-width:120px;">
             <div class="stat-label">Амплітуда</div>
@@ -568,7 +679,7 @@
 
 
     <!-- ══════════════════════════════════════════════
-         04 — ФОРМИ СИГНАЛІВ (анімований вибір)
+         04 — ФОРМИ СИГНАЛІВ
     ══════════════════════════════════════════════ -->
     <div class="section-header">
       <span class="section-num">04 —</span>
@@ -624,7 +735,7 @@
             </tr>
             <tr>
               <td class="mono accent">Pulse</td>
-              <td>Короткий імпульс HIGH на фоні тривалого LOW. Duty cycle «lt;50%.</td>
+              <td>Короткий імпульс HIGH на фоні тривалого LOW. Duty cycle &lt;50%.</td>
               <td>IR-пульти, тригери, watchdog reset, <code class="ic">TIM</code> one-pulse mode</td>
             </tr>
           </tbody>
@@ -634,7 +745,7 @@
 
 
     <!-- ══════════════════════════════════════════════
-         05 — ЛОГІЧНІ РІВНІ (інтерактивна демонстрація)
+         05 — ЛОГІЧНІ РІВНІ
     ══════════════════════════════════════════════ -->
     <div class="section-header">
       <span class="section-num">05 —</span>
@@ -646,7 +757,6 @@
       Але реальна напруга варіюється, тому існують <strong>пороги та noise margin</strong>.
     </p>
 
-    <!-- Interactive threshold demo -->
     <div class="anim-wrap">
       <div class="anim-header">
         <span class="anim-title">Логічні рівні · 3.3В CMOS (STM32)</span>
@@ -739,7 +849,6 @@
       В реальній схемі сигнал завжди десь <em>генерується</em>. Джерело визначає характеристики сигналу.
     </p>
 
-    <!-- Animated source demo -->
     <div class="anim-wrap">
       <div class="anim-header">
         <span class="anim-title">Джерела сигналу · живий приклад</span>
@@ -868,8 +977,23 @@
         <div class="accordion-body">
           <div class="accordion-content">
             <strong>Сигнал</strong> — це фізична величина (зазвичай напруга), що змінюється в часі і несе інформацію.<br/><br/>
+            На фізичному рівні всі сигнали аналогові — напруга змінюється безперервно. Поділ на типи — концептуальний.<br/><br/>
             <strong>Аналоговий:</strong> напруга приймає будь-яке неперервне значення в діапазоні (наприклад, 0–3.3В). Приклад: вихід термістора — 1.24В при 25°C, 0.91В при 50°C.<br/><br/>
-            <strong>Цифровий:</strong> напруга приймає лише два рівні — HIGH (~VDD) або LOW (~0В). Будь-яке проміжне значення — це або шум, або помилка схеми (невизначена зона).
+            <strong>Цифровий:</strong> схема інтерпретує напругу як HIGH або LOW залежно від порогів V_IH / V_IL. Будь-яке значення між ними — forbidden zone, ризик metastability.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <button class="accordion-trigger" onclick="toggleAccordion(this)">
+          <span>Що таке Schmitt Trigger і навіщо він потрібен?</span>
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-body">
+          <div class="accordion-content">
+            <strong>Schmitt Trigger (тригер Шмітта)</strong> — компаратор з <em>гістерезисом</em>. Він має два різні порогові рівні: один для переходу 0→1, інший для 1→0.<br/><br/>
+            Це потрібно тому, що реальні сигнали мають "брудний" фронт — напруга не перемикається миттєво, а проходить через перехідну зону з шумами. Звичайний компаратор у такій ситуації багатократно перемикається (дребезг). Schmitt Trigger перемикається лише один раз і тримає стан завдяки гістерезису.<br/><br/>
+            В embedded: GPIO STM32 з включеним гістерезисом, дебаунс кнопок, очищення зашумлених аналогових сигналів.
           </div>
         </div>
       </div>
@@ -961,14 +1085,14 @@
         </div>
       </div>
 
-    </div><!-- /accordion -->
+    </div>
 
 
     <div class="page-footer">
       // Конспект · Embedded Systems Notes · Signal Fundamentals · Anton Bodnia
     </div>
 
-  </div><!-- /page-wrap -->
+  </div>
 
 
   <script>
@@ -1013,16 +1137,17 @@
       mid:      'rgba(255,255,255,0.12)',
     };
 
-    function getCtx(id) {
+    function setupCanvas(id, cssH) {
       const canvas = document.getElementById(id);
+      if (!canvas) return null;
       const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width  = rect.width  * dpr || canvas.offsetWidth  * dpr;
-      canvas.height = canvas.height * dpr;
+      const w = canvas.offsetWidth || 300;
+      canvas.width  = w * dpr;
+      canvas.height = cssH * dpr;
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
-      canvas._cssW = canvas.offsetWidth;
-      canvas._cssH = canvas.height / dpr;
+      canvas._cssW = w;
+      canvas._cssH = cssH;
       return ctx;
     }
 
@@ -1038,7 +1163,7 @@
     }
 
     /* ══════════════════════════════════════════════════════
-       ANALOG vs DIGITAL CANVASES
+       ANALOG vs DIGITAL CANVASES (top comparison)
     ══════════════════════════════════════════════════════ */
     let analogT = 0, digitalT = 0;
 
@@ -1051,7 +1176,6 @@
       ctx.scale(dpr, dpr);
       ctx.fillStyle = C.bgEl; ctx.fillRect(0,0,w,h);
       drawGrid(ctx, w, h);
-
       const pts = 200;
       ctx.beginPath();
       ctx.strokeStyle = C.rising; ctx.lineWidth = 2;
@@ -1074,7 +1198,6 @@
       ctx.scale(dpr, dpr);
       ctx.fillStyle = C.bgEl; ctx.fillRect(0,0,w,h);
       drawGrid(ctx, w, h);
-
       const margin = 14;
       const high = margin, low = h - margin;
       ctx.beginPath();
@@ -1096,8 +1219,6 @@
         }
       }
       ctx.stroke();
-
-      // Labels
       ctx.font = '9px JetBrains Mono';
       ctx.fillStyle = C.clk;
       ctx.fillText('HIGH', 4, high + 10);
@@ -1106,8 +1227,113 @@
       digitalT += 0.04;
     }
 
+    /* ══════════════════════════════════════════════════════
+       ANALOG DETAIL CANVAS (section 02 card)
+    ══════════════════════════════════════════════════════ */
+    let analogDetailT = 0;
+    function drawAnalogDetail() {
+      const canvas = document.getElementById('analogDetailCanvas');
+      if (!canvas) return;
+      const w = canvas.offsetWidth, h = 70;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.fillStyle = '#1a1d20'; ctx.fillRect(0,0,w,h);
+      drawGrid(ctx, w, h);
+      ctx.beginPath();
+      ctx.strokeStyle = C.rising; ctx.lineWidth = 2;
+      const pts = 180;
+      for (let i = 0; i <= pts; i++) {
+        const x = (i / pts) * w;
+        const t = (i / pts) * 4 * Math.PI + analogDetailT;
+        const y = h/2 - (Math.sin(t)*0.55 + Math.sin(t*1.8)*0.25 + Math.sin(t*0.6)*0.15) * h * 0.38;
+        i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      analogDetailT += 0.035;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       DIGITAL DETAIL CANVAS WITH RISE/FALL TRANSITION
+    ══════════════════════════════════════════════════════ */
+    let digitalDetailT = 0;
+    function drawDigitalDetail() {
+      const canvas = document.getElementById('digitalDetailCanvas');
+      if (!canvas) return;
+      const w = canvas.offsetWidth, h = 70;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.fillStyle = '#1a1d20'; ctx.fillRect(0,0,w,h);
+      drawGrid(ctx, w, h);
+
+      const margin = 10;
+      const high = margin, low = h - margin;
+      const riseWidth = 8; // px — simulated transition width
+
+      // Draw "ideal" ghost in muted
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(74,158,255,0.15)'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+      const steps2 = 6;
+      let lh2 = false;
+      for (let i = 0; i <= steps2; i++) {
+        const x = (i / steps2) * w;
+        const ph = (i / steps2 * 3 * Math.PI + digitalDetailT);
+        const ih = Math.sin(ph) > 0;
+        if (i === 0) { ctx.moveTo(0, ih ? high : low); lh2 = ih; }
+        else {
+          if (ih !== lh2) { ctx.lineTo(x, lh2 ? high : low); ctx.lineTo(x, ih ? high : low); lh2 = ih; }
+          ctx.lineTo(x, ih ? high : low);
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw realistic signal with finite rise/fall time
+      const pts = w * 3;
+      ctx.beginPath();
+      ctx.strokeStyle = C.clk; ctx.lineWidth = 2;
+      const period = w / 3;
+      for (let i = 0; i <= pts; i++) {
+        const x = (i / pts) * w;
+        const tOff = (digitalDetailT * 15) % period;
+        const xInPeriod = ((x + tOff) % period + period) % period;
+        const halfP = period / 2;
+
+        let y;
+        if (xInPeriod < riseWidth) {
+          // rising edge
+          const t = xInPeriod / riseWidth;
+          y = low + (high - low) * (t);
+        } else if (xInPeriod < halfP) {
+          y = high;
+        } else if (xInPeriod < halfP + riseWidth) {
+          // falling edge
+          const t = (xInPeriod - halfP) / riseWidth;
+          y = high + (low - high) * t;
+        } else {
+          y = low;
+        }
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Rise/fall labels
+      ctx.font = '8px JetBrains Mono';
+      ctx.fillStyle = C.warning;
+      ctx.fillText('↗ rise', 4, high - 2);
+      ctx.fillStyle = C.muted;
+      ctx.fillText('HIGH', w*0.2, high + 10);
+      ctx.fillText('LOW', w*0.2, low - 3);
+
+      digitalDetailT += 0.018;
+    }
+
     function animateCompare() {
       drawAnalog(); drawDigital();
+      drawAnalogDetail(); drawDigitalDetail();
       requestAnimationFrame(animateCompare);
     }
     animateCompare();
@@ -1158,7 +1384,6 @@
       const a = (amp / 100) * maxA;
       const phRad = (phase / 360) * Math.PI * 2;
       const th = t * freq * Math.PI * 2 + phRad;
-
       let v = 0;
       if (wave === 'sine') {
         v = Math.sin(th);
@@ -1182,11 +1407,8 @@
       canvas.width = w * dpr; canvas.height = h * dpr;
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
-
       ctx.fillStyle = C.bg; ctx.fillRect(0,0,w,h);
       drawGrid(ctx, w, h);
-
-      // Draw signal
       ctx.beginPath();
       ctx.strokeStyle = C.rising; ctx.lineWidth = 2.5;
       const pts = w * 2;
@@ -1197,8 +1419,6 @@
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.stroke();
-
-      // Amplitude label
       const a = (paramState.amp / 100) * (h/2 - 16);
       ctx.strokeStyle = 'rgba(0,208,132,0.15)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
       ctx.beginPath(); ctx.moveTo(0, h/2 - a); ctx.lineTo(w, h/2 - a); ctx.stroke();
@@ -1206,8 +1426,6 @@
       ctx.setLineDash([]);
       ctx.font = '9px JetBrains Mono'; ctx.fillStyle = 'rgba(0,208,132,0.5)';
       ctx.fillText((paramState.amp/100*3.3).toFixed(2)+'В', 4, h/2 - a - 3);
-
-      // Period marker
       if (paramState.freq > 0) {
         const periodW = (1 / paramState.freq) / 2 * w;
         ctx.strokeStyle = 'rgba(74,158,255,0.2)'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
@@ -1216,18 +1434,12 @@
         ctx.fillStyle = 'rgba(74,158,255,0.5)'; ctx.font = '9px JetBrains Mono';
         ctx.fillText('T/2', periodW + 3, 12);
       }
-
-      // Zero line
       ctx.strokeStyle = C.dim; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
-
       paramT += 0.008;
     }
 
-    function animateParam() {
-      drawParamCanvas();
-      requestAnimationFrame(animateParam);
-    }
+    function animateParam() { drawParamCanvas(); requestAnimationFrame(animateParam); }
     animateParam();
 
 
@@ -1246,7 +1458,6 @@
 
     function selectShape(type, btn) {
       currentShape = type;
-      document.querySelectorAll('#shapesCanvas').forEach(()=>{});
       document.querySelectorAll('.wave-selector .wave-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       document.getElementById('waveShapeLabel').textContent = type.toUpperCase() + ' WAVE';
@@ -1277,7 +1488,6 @@
         ctx.strokeStyle = col;
         ctx.lineWidth = type === currentShape ? 2.5 : 1.5;
 
-        // Label
         ctx.font = '9px JetBrains Mono';
         ctx.fillStyle = col;
         ctx.fillText(type.toUpperCase(), 4, baseY - amp - 2);
@@ -1305,7 +1515,6 @@
         }
         ctx.stroke();
 
-        // Divider
         if (idx < types.length - 1) {
           ctx.globalAlpha = 0.08;
           ctx.strokeStyle = '#fff';
@@ -1321,10 +1530,7 @@
       shapesT += 0.008;
     }
 
-    function animateShapes() {
-      drawShapes();
-      requestAnimationFrame(animateShapes);
-    }
+    function animateShapes() { drawShapes(); requestAnimationFrame(animateShapes); }
     animateShapes();
 
 
@@ -1332,13 +1538,10 @@
        LOGIC LEVELS INTERACTIVE
     ══════════════════════════════════════════════════════ */
     let currentVolt = 2.5;
-
-    const V_IH  = 2.0;
-    const V_IL  = 0.8;
-    const VDD   = 3.3;
+    const V_IH = 2.0, V_IL = 0.8, VDD = 3.3;
     const zoneDescs = {
-      high:    '▲ Зона HIGH: напруга вище 2.0В — мікроконтролер читає логічну "1"',
-      low:     '▼ Зона LOW: напруга нижче 0.8В — мікроконтролер читає логічний "0"',
+      high:      '▲ Зона HIGH: напруга вище 2.0В — мікроконтролер читає логічну "1"',
+      low:       '▼ Зона LOW: напруга нижче 0.8В — мікроконтролер читає логічний "0"',
       forbidden: '⚠ Заборонена зона: 0.8В–2.0В — невизначений стан, ризик metastability!'
     };
 
@@ -1346,11 +1549,9 @@
       currentVolt = val / 100;
       document.getElementById('voltVal').innerHTML =
         currentVolt.toFixed(2) + '<span style="font-size:10px;color:var(--text-muted)"> В</span>';
-
       const logicState = document.getElementById('logicState');
       const logicLabel = document.getElementById('logicLabel');
       const desc = document.getElementById('logicZoneDesc');
-
       if (currentVolt >= V_IH) {
         logicState.className = 'logic-dot high';
         logicLabel.textContent = 'HIGH';
@@ -1380,36 +1581,21 @@
       canvas.width = w * dpr; canvas.height = h * dpr;
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
-
       ctx.fillStyle = C.bg; ctx.fillRect(0,0,w,h);
-
       const pad = { top: 20, bot: 20 };
       const plotH = h - pad.top - pad.bot;
       const voltToY = v => pad.top + plotH * (1 - v / VDD);
+      const yHigh = voltToY(V_IH), yLow = voltToY(V_IL);
+      const yVDD = voltToY(VDD), yGND = voltToY(0);
 
-      const yHigh = voltToY(V_IH);
-      const yLow  = voltToY(V_IL);
-      const yVDD  = voltToY(VDD);
-      const yGND  = voltToY(0);
+      ctx.fillStyle = 'rgba(0,208,132,0.06)'; ctx.fillRect(60, yVDD, w-60, yHigh - yVDD);
+      ctx.fillStyle = 'rgba(245,200,66,0.06)'; ctx.fillRect(60, yHigh, w-60, yLow - yHigh);
+      ctx.fillStyle = 'rgba(74,158,255,0.04)'; ctx.fillRect(60, yLow, w-60, yGND - yLow);
 
-      // Zone fills
-      // HIGH zone
-      ctx.fillStyle = 'rgba(0,208,132,0.06)';
-      ctx.fillRect(60, yVDD, w-60, yHigh - yVDD);
-      // Forbidden zone
-      ctx.fillStyle = 'rgba(245,200,66,0.06)';
-      ctx.fillRect(60, yHigh, w-60, yLow - yHigh);
-      // LOW zone
-      ctx.fillStyle = 'rgba(74,158,255,0.04)';
-      ctx.fillRect(60, yLow, w-60, yGND - yLow);
-
-      // Grid
       drawGrid(ctx, w, h);
 
-      // Threshold lines
       function dashed(y, col, label, val) {
-        ctx.strokeStyle = col; ctx.lineWidth = 1;
-        ctx.setLineDash([6,4]);
+        ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.setLineDash([6,4]);
         ctx.beginPath(); ctx.moveTo(60, y); ctx.lineTo(w, y); ctx.stroke();
         ctx.setLineDash([]);
         ctx.font = '9px JetBrains Mono'; ctx.fillStyle = col;
@@ -1423,32 +1609,23 @@
       dashed(yLow, 'rgba(74,158,255,0.5)', 'V_IL', '0.8В');
       dashed(yGND, 'rgba(255,255,255,0.2)', 'GND', '0В');
 
-      // Zone labels on left
       ctx.font = '9px JetBrains Mono';
-      ctx.fillStyle = 'rgba(0,208,132,0.7)';
-      ctx.fillText('HIGH', 4, (yVDD + yHigh)/2 + 3);
-      ctx.fillStyle = 'rgba(245,200,66,0.7)';
-      ctx.fillText('???', 4, (yHigh + yLow)/2 + 3);
-      ctx.fillStyle = 'rgba(74,158,255,0.7)';
-      ctx.fillText('LOW', 4, (yLow + yGND)/2 + 3);
+      ctx.fillStyle = 'rgba(0,208,132,0.7)'; ctx.fillText('HIGH', 4, (yVDD + yHigh)/2 + 3);
+      ctx.fillStyle = 'rgba(245,200,66,0.7)'; ctx.fillText('???', 4, (yHigh + yLow)/2 + 3);
+      ctx.fillStyle = 'rgba(74,158,255,0.7)'; ctx.fillText('LOW', 4, (yLow + yGND)/2 + 3);
 
-      // Current voltage marker
       const yCurr = voltToY(currentVolt);
       let markerCol = C.rising;
       if (currentVolt < V_IH && currentVolt > V_IL) markerCol = C.warning;
       else if (currentVolt <= V_IL) markerCol = C.clk;
 
-      // Horizontal line for current V
       ctx.strokeStyle = markerCol; ctx.lineWidth = 2; ctx.setLineDash([]);
       ctx.beginPath(); ctx.moveTo(60, yCurr); ctx.lineTo(w - 10, yCurr); ctx.stroke();
-
-      // Arrow/marker
       ctx.fillStyle = markerCol;
       ctx.beginPath(); ctx.arc(w - 10, yCurr, 5, 0, Math.PI*2); ctx.fill();
       ctx.font = 'bold 10px JetBrains Mono';
       ctx.fillText(currentVolt.toFixed(2)+'В', w - 54, yCurr - 7);
 
-      // Y-axis ticks
       for (let v = 0; v <= 3.3; v += 0.5) {
         const y = voltToY(v);
         ctx.fillStyle = C.muted; ctx.font = '8px JetBrains Mono';
@@ -1456,10 +1633,7 @@
       }
     }
 
-    function animateLogic() {
-      drawLogicCanvas();
-      requestAnimationFrame(animateLogic);
-    }
+    function animateLogic() { drawLogicCanvas(); requestAnimationFrame(animateLogic); }
     animateLogic();
     updateVoltage(250);
 
@@ -1513,7 +1687,6 @@
       for (let i = 0; i <= pts; i++) {
         const x = (i / pts) * w;
         const t = (i / pts) * 3 + sourceT;
-
         let y = h/2;
         if (sourceType === 'mcu') {
           const n = ((t % 1) + 1) % 1;
@@ -1528,30 +1701,20 @@
           y = h/2 - Math.sin(t * Math.PI * 2) * amp * 0.75;
           ctx.strokeStyle = C.clk;
         } else if (sourceType === 'button') {
-          // Clean press + bounce
           const cycle = (t / 2) % 1;
           let v;
-          if (cycle < 0.3) {
-            v = -1; // LOW (not pressed)
-          } else if (cycle < 0.38) {
-            // Bounce region
-            const btc = ((cycle - 0.3) / 0.08);
-            v = (Math.sin(btc * Math.PI * 12) > 0) ? 0.85 : -0.85;
-            // Random-ish bounce
+          if (cycle < 0.3) { v = -1; }
+          else if (cycle < 0.38) {
+            const btc = (cycle - 0.3) / 0.08;
             v = Math.sin(btc * 47) > 0.2 ? 0.85 : -0.85;
-          } else if (cycle < 0.7) {
-            v = 1;
-          } else if (cycle < 0.78) {
-            // Release bounce
+          } else if (cycle < 0.7) { v = 1; }
+          else if (cycle < 0.78) {
             const btc = (cycle - 0.7) / 0.08;
             v = Math.sin(btc * 43) > 0.2 ? 0.85 : -0.85;
-          } else {
-            v = -1;
-          }
+          } else { v = -1; }
           y = h/2 - v * amp * 0.8;
           ctx.strokeStyle = C.falling;
         }
-
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.stroke();
@@ -1563,10 +1726,7 @@
       sourceT += 0.012;
     }
 
-    function animateSource() {
-      drawSource();
-      requestAnimationFrame(animateSource);
-    }
+    function animateSource() { drawSource(); requestAnimationFrame(animateSource); }
     animateSource();
   </script>
 
