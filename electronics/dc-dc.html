@@ -88,6 +88,8 @@ h1{
 .section:nth-child(5){animation:fadeUp .45s .25s both}
 .section:nth-child(6){animation:fadeUp .45s .30s both}
 .section:nth-child(7){animation:fadeUp .45s .35s both}
+.section:nth-child(8){animation:fadeUp .45s .40s both}
+.section:nth-child(9){animation:fadeUp .45s .45s both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
 .sec-num{font-size:10px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
@@ -160,6 +162,18 @@ ol li p{margin-top:4px}
 .pc-item::before{position:absolute;left:0;font-size:11px}
 .pro-card .pc-item::before{content:'✓';color:var(--green)}
 .con-card .pc-item::before{content:'✗';color:var(--orange)}
+
+/* ── COMPARE TABLE ── */
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12px}
+.cmp-table th{
+  text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;border-bottom:1px solid var(--brd2);
+}
+.cmp-table td{padding:9px 12px;border-bottom:1px solid var(--brd);color:var(--dim)}
+.cmp-table td strong{color:var(--text)}
+.cmp-table tr:last-child td{border-bottom:none}
+.cmp-table .col-async{color:var(--orange)}
+.cmp-table .col-sync{color:var(--cyan)}
 
 /* ── HR ── */
 .divider{border:none;border-top:1px solid var(--brd);margin:56px 0}
@@ -259,10 +273,11 @@ input[type=range]::-webkit-slider-thumb{
   <a href="#s2">02 — Типи</a>
   <a href="#s3">03 — Використання</a>
   <a href="#s4">04 — Принцип роботи</a>
-  <a href="#s5">05 — Частота перемикання</a>
-  <a href="#s6">06 — Feedback</a>
-  <a href="#s7">07 — Схема (Live)</a>
-  <a href="#s8">08 — Переваги / Недоліки</a>
+  <a href="#s5">05 — Синхронний / Асинхронний</a>
+  <a href="#s6">06 — Частота перемикання</a>
+  <a href="#s7">07 — Feedback</a>
+  <a href="#s8">08 — Схема (Live)</a>
+  <a href="#s9">09 — Переваги / Недоліки</a>
 </nav>
 
 <!-- MAIN -->
@@ -390,11 +405,112 @@ input[type=range]::-webkit-slider-thumb{
         <p>Споживає стабілізовану напругу: <code>ESP32, STM32, motor driver, sensor</code></p>
       </li>
     </ol>
+
+    <div class="inf">
+      <div class="badge">До уваги</div>
+      <div class="callout-text">
+        Схема, описана вище (з діодом Schottky у freewheeling-шляху), — це класична <strong>асинхронна</strong> топологія. Наступний розділ пояснює, чим від неї відрізняється <strong>синхронна</strong> версія.
+      </div>
+    </div>
   </div>
 
-  <!-- 05 ЧАСТОТА ПЕРЕМИКАННЯ -->
+  <!-- 05 СИНХРОННИЙ / АСИНХРОННИЙ -->
   <div class="section" id="s5">
     <div class="sec-num">05 —</div>
+    <div class="sec-title">Синхронний vs Асинхронний перетворювач</div>
+    <p class="sec-text">
+      Різниця між ними — <strong>у тому, як реалізований freewheeling-шлях</strong> (шлях для струму індуктора під час OFF-фази): через діод чи через другий керований транзистор.
+    </p>
+
+    <h3 style="font-family:var(--sans);font-size:14px;color:#fff;margin:18px 0 8px">Асинхронний (Non-synchronous)</h3>
+    <p class="sec-text">
+      Класична схема з <strong>одним</strong> силовим ключем (MOSFET) та <strong>Schottky-діодом</strong> замість другого ключа.
+    </p>
+    <div class="flow">
+      <div class="flow-box c">Q (High-side)</div>
+      <div class="flow-arr">+</div>
+      <div class="flow-box o">Diode (пасивний)</div>
+    </div>
+    <ul>
+      <li><strong>ON:</strong> Q провідний → струм іде в L</li>
+      <li><strong>OFF:</strong> Q розімкнений → струм індуктора продовжує текти через діод (сам «відкривається», коли напруга це дозволяє — керування не потрібне)</li>
+      <li>Втрати на діоді: <code>P = Vf × IL</code>, де <code>Vf ≈ 0.3–0.5В</code> — при великих струмах це відчутні втрати</li>
+      <li>Простіша схема, дешевша, не потребує складного драйвера другого ключа</li>
+    </ul>
+
+    <h3 style="font-family:var(--sans);font-size:14px;color:#fff;margin:22px 0 8px">Синхронний (Synchronous)</h3>
+    <p class="sec-text">
+      Діод замінюється на <strong>другий MOSFET (low-side / synchronous rectifier)</strong>, який IC вмикає саме тоді, коли раніше провідність брав би на себе діод.
+    </p>
+    <div class="flow">
+      <div class="flow-box c">Q1 (High-side)</div>
+      <div class="flow-arr">+</div>
+      <div class="flow-box g">Q2 (Low-side, замість діода)</div>
+    </div>
+    <ul>
+      <li><strong>ON:</strong> Q1 провідний, Q2 вимкнений → струм іде в L, як і в асинхронній схемі</li>
+      <li><strong>OFF:</strong> Q1 вимкнений, Q2 вмикається → струм індуктора тече через канал Q2 замість діода</li>
+      <li>Втрати на Q2: <code>P = I²L × Rds(on)</code>, де <code>Rds(on)</code> сучасних MOSFET — одиниці міліом → втрати на порядок нижчі, ніж на діоді</li>
+      <li>IC повинна керувати <strong>обома</strong> ключами і вставляти <strong>dead-time</strong> — коротку паузу між вимкненням одного ключа і вмиканням іншого</li>
+    </ul>
+
+    <div class="warn">
+      <div class="badge">Shoot-through</div>
+      <div class="callout-text">
+        Якщо Q1 і Q2 виявляться відкритими одночасно (навіть на наносекунди) — це <strong>shoot-through</strong>: коротке замикання VIN на GND через обидва транзистори. Тому контролер завжди вставляє <strong>dead-time</strong> між перемиканнями, і потребує спеціального gate-драйвера (часто з bootstrap-конденсатором для верхнього ключа).
+      </div>
+    </div>
+
+    <p class="sec-text" style="margin-top:16px">Порівняння:</p>
+    <table class="cmp-table">
+      <tr>
+        <th>Параметр</th>
+        <th class="col-async">Асинхронний</th>
+        <th class="col-sync">Синхронний</th>
+      </tr>
+      <tr>
+        <td><strong>Freewheeling елемент</strong></td>
+        <td class="col-async">Schottky діод</td>
+        <td class="col-sync">MOSFET (Q2)</td>
+      </tr>
+      <tr>
+        <td><strong>Втрати провідності</strong></td>
+        <td class="col-async">вищі (Vf × I)</td>
+        <td class="col-sync">нижчі (I² × Rds(on))</td>
+      </tr>
+      <tr>
+        <td><strong>ККД</strong></td>
+        <td class="col-async">нижчий, особливо при великому I та малому Vout</td>
+        <td class="col-sync">вищий (95%+ типово)</td>
+      </tr>
+      <tr>
+        <td><strong>Складність керування</strong></td>
+        <td class="col-async">просте (діод пасивний)</td>
+        <td class="col-sync">потрібен 2-й gate driver + dead-time</td>
+      </tr>
+      <tr>
+        <td><strong>Вартість / BOM</strong></td>
+        <td class="col-async">нижча</td>
+        <td class="col-sync">вища (2 MOSFET + драйвер)</td>
+      </tr>
+      <tr>
+        <td><strong>Типове застосування</strong></td>
+        <td class="col-async">малопотужні, недорогі, low duty-cycle</td>
+        <td class="col-sync">потужні, батарейні, low-Vout / high-current системи</td>
+      </tr>
+    </table>
+
+    <div class="key">
+      <div class="badge">Практика</div>
+      <div class="callout-text">
+        Більшість сучасних IC для <strong>Buck</strong>-перетворювачів (наприклад, у power-модулях для STM32/ESP32 з великим струмом навантаження) — саме <strong>синхронні</strong>: вищий ККД критичний при живленні від батареї. Асинхронна схема з діодом частіше зустрічається у простих, дешевих або малострумових застосуваннях.
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 ЧАСТОТА ПЕРЕМИКАННЯ -->
+  <div class="section" id="s6">
+    <div class="sec-num">06 —</div>
     <div class="sec-title">Частота перемикання (f<sub>sw</sub>)</div>
     <p class="sec-text">
       Частота, з якою MOSFET вмикається і вимикається. Типовий діапазон — від <strong>100 кГц до 3 МГц</strong>.
@@ -426,9 +542,9 @@ input[type=range]::-webkit-slider-thumb{
     </div>
   </div>
 
-  <!-- 06 FEEDBACK -->
-  <div class="section" id="s6">
-    <div class="sec-num">06 —</div>
+  <!-- 07 FEEDBACK -->
+  <div class="section" id="s7">
+    <div class="sec-num">07 —</div>
     <div class="sec-title">Feedback / Зворотній зв'язок</div>
     <p class="sec-text">
       IC постійно вимірює вихідну напругу і підлаштовує duty cycle щоб тримати Vout стабільним — навіть якщо змінюється навантаження або Vin.
@@ -461,9 +577,9 @@ input[type=range]::-webkit-slider-thumb{
     <pre>Vout = Vref × (1 + R1/R2)   ← формула для більшості IC</pre>
   </div>
 
-  <!-- 07 INTERACTIVE WIDGET -->
-  <div class="section" id="s7">
-    <div class="sec-num">07 —</div>
+  <!-- 08 INTERACTIVE WIDGET -->
+  <div class="section" id="s8">
+    <div class="sec-num">08 —</div>
     <div class="sec-title">Інтерактивна схема</div>
 
 
@@ -544,9 +660,9 @@ input[type=range]::-webkit-slider-thumb{
     </div>
   </div>
 
-  <!-- 08 ПЕРЕВАГИ / НЕДОЛІКИ -->
-  <div class="section" id="s8">
-    <div class="sec-num">08 —</div>
+  <!-- 09 ПЕРЕВАГИ / НЕДОЛІКИ -->
+  <div class="section" id="s9">
+    <div class="sec-num">09 —</div>
     <div class="sec-title">Переваги / Недоліки</div>
     <div class="proscons">
       <div class="pro-card">
