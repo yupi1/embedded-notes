@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Атом · Конспект · Фізика / Хімія</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --bg:        #0d0f11;
+      --bg2:       #13161a;
+      --bg3:       #1a1e24;
+      --border:    #242a32;
+      --border2:   #2e3640;
+      --text:      #c9d1dc;
+      --text-dim:  #5c6775;
+      --text-mid:  #8a95a3;
+      --accent:    #4a9eff;
+      --accent2:   #2d7dd2;
+      --green:     #3ecf8e;
+      --yellow:    #f5c842;
+      --red:       #e05c5c;
+      --orange:    #f0884a;
+      --purple:    #a78bfa;
+      --key-bg:    #1a1f16;
+      --key-border:#3a6b2a;
+      --key-text:  #7ecb5a;
+      --inf-bg:    #141a24;
+      --inf-border:#2a4a7a;
+      --inf-text:  #5aa0e0;
+      --wrn-bg:    #1e1508;
+      --wrn-border:#6b4a1a;
+      --wrn-text:  #e0a040;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      padding: 18px 0 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .nav-back {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color .2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+    .nav-breadcrumb {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      padding: 12px 0 16px;
+      text-transform: uppercase;
+    }
+    .nav-breadcrumb span { color: var(--text-mid); }
+
+    /* ── Header ── */
+    .hero { margin-bottom: 48px; }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #e8edf3;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 3px;
+      border: 1px solid var(--border2);
+      color: var(--text-mid);
+      background: var(--bg2);
+    }
+    .tag.learnt { border-color: #2a5a3a; color: var(--green); background: #0d1c14; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 64px; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e0e8f0;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin: 20px 0;
+      border-left: 3px solid;
+    }
+    .callout-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .callout-body { font-size: 13px; line-height: 1.7; }
+    .callout.key  { background: var(--key-bg); border-color: var(--key-border); }
+    .callout.key  .callout-label { color: var(--key-text); }
+    .callout.key  .callout-body  { color: #9dd47a; }
+    .callout.inf  { background: var(--inf-bg); border-color: var(--inf-border); }
+    .callout.inf  .callout-label { color: var(--inf-text); }
+    .callout.inf  .callout-body  { color: #7ab0d8; }
+    .callout.wrn  { background: var(--wrn-bg); border-color: var(--wrn-border); }
+    .callout.wrn  .callout-label { color: var(--wrn-text); }
+    .callout.wrn  .callout-body  { color: #c89050; }
+
+    /* ── Prose ── */
+    .prose { font-size: 13.5px; color: var(--text); line-height: 1.8; }
+    .prose + .prose { margin-top: 12px; }
+    .prose b, .prose strong { color: #ddeeff; font-weight: 600; }
+    .prose code {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    /* ── Interactive Atom ── */
+    .atom-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 24px 0;
+    }
+    .atom-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .atom-label::after {
+      content: '▶ LIVE';
+      font-size: 10px;
+      color: var(--green);
+      background: #0d1c14;
+      border: 1px solid #2a5a3a;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+    #atom-canvas {
+      display: block;
+      margin: 0 auto;
+      background: transparent;
+    }
+    .atom-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .atom-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 16px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text-mid);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: 0.04em;
+    }
+    .atom-btn:hover, .atom-btn.active {
+      background: #0e2540;
+      border-color: var(--accent2);
+      color: var(--accent);
+    }
+    .atom-info {
+      margin-top: 16px;
+      padding: 14px;
+      background: var(--bg3);
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-mid);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .atom-info b { color: var(--accent); }
+
+    /* ── Table ── */
+    .tbl-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    thead tr { background: var(--bg3); }
+    thead th {
+      text-align: left;
+      padding: 10px 16px;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg2); }
+    tbody td {
+      padding: 10px 16px;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    td code {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      padding: 1px 6px;
+      font-size: 11px;
+      color: var(--accent);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+    }
+    .badge.full  { background: #0d1c14; border: 1px solid #2a5a3a; color: var(--green); }
+    .badge.part  { background: #1a140d; border: 1px solid #5a3a1a; color: var(--orange); }
+    .badge.empty { background: var(--bg3); border: 1px solid var(--border2); color: var(--text-dim); }
+
+    /* ── Ion Cards ── */
+    .cards-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    @media (max-width: 540px) { .cards-2 { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 18px 20px;
+    }
+    .card-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .card-body { font-size: 12.5px; color: var(--text-mid); line-height: 1.7; }
+    .card-example {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: var(--bg3);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .card-example b { color: var(--text); }
+    .card.cation { border-color: #3a2a1a; }
+    .card.cation .card-eyebrow { color: var(--orange); }
+    .card.cation .card-title   { color: var(--orange); }
+    .card.anion  { border-color: #1a2a3a; }
+    .card.anion  .card-eyebrow { color: var(--accent); }
+    .card.anion  .card-title   { color: var(--accent); }
+
+    /* ── Conductivity Cards ── */
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    @media (max-width: 640px) { .cards-3 { grid-template-columns: 1fr; } }
+    .card.metal     { border-color: #2a3a1a; }
+    .card.metal .card-eyebrow { color: var(--green); }
+    .card.metal .card-title   { color: var(--green); }
+    .card.semi      { border-color: #2a2a1a; }
+    .card.semi .card-eyebrow  { color: var(--yellow); }
+    .card.semi .card-title    { color: var(--yellow); }
+    .card.insul     { border-color: #3a1a1a; }
+    .card.insul .card-eyebrow { color: var(--red); }
+    .card.insul .card-title   { color: var(--red); }
+    .card-config {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 8px 12px;
+      background: var(--bg3);
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Conductivity bar visual ── */
+    .cond-bar-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .cond-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+    .cond-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .cond-name {
+      width: 110px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .cond-track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg3);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .cond-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+    .cond-val {
+      width: 80px;
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: right;
+    }
+
+    /* ── Current canvas ── */
+    #current-wrap .atom-label::after { content: '▶ LIVE'; }
+    #current-canvas { image-rendering: pixelated; }
+
+    /* ── Footer ── */
+    .footer {
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Nav -->
+  <div class="nav">
+    <a class="nav-back" href="#">← повернутись до конспекту</a>
+    <div class="nav-breadcrumb">Конспект · <span>Фізика / Хімія</span> · Atom Fundamentals</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Атом</h1>
+    <p class="hero-sub">
+      Атом — базова будівельна одиниця речовини. Розуміння його будови пояснює все:
+      від таблиці Менделєєва до провідності металів і роботи напівпровідників.
+    </p>
+    <div class="tags">
+      <span class="tag learnt">learnt</span>
+      <span class="tag">Фізика</span>
+      <span class="tag">Хімія</span>
+      <span class="tag">Fundamentals</span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 ═══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01 —</span>
+      <span class="section-title">Визначення</span>
+    </div>
+
+    <p class="prose">
+      <strong>Атом</strong> — електронейтральна частинка, що складається з позитивно зарядженого
+      <strong>ядра</strong> та негативно заряджених <strong>електронів</strong>, які рухаються навколо нього.
+      Атом — найменша частинка хімічного елемента, що зберігає його властивості.
+    </p>
+
+    <div class="callout key">
+      <div class="callout-label">Ключова ідея</div>
+      <div class="callout-body">
+        Атом = ядро (p⁺ + n⁰) + електронна оболонка (e⁻). Кількість протонів визначає елемент.
+        Кількість електронів = кількість протонів → атом електронейтральний.
+      </div>
+    </div>
+
+    <div class="callout inf">
+      <div class="callout-label">Аналогія</div>
+      <div class="callout-body">
+        Уяви Сонячну систему. Ядро — це Сонце (важке, компактне, у центрі).
+        Електрони — планети, що обертаються по орбітах. Але на відміну від планет,
+        електрони займають не точні орбіти, а <em>хмари ймовірностей</em> — енергетичні рівні.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 02 ═══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02 —</span>
+      <span class="section-title">Будова</span>
+    </div>
+
+    <p class="prose">
+      Атом складається з двох частин: <strong>ядра</strong> в центрі та
+      <strong>електронної оболонки</strong> навколо нього. Вибери елемент нижче і спостерігай структуру:
+    </p>
+
+    <!-- Interactive atom -->
+    <div class="atom-wrap">
+      <div class="atom-label">Модель атома</div>
+      <canvas id="atom-canvas" width="480" height="320"></canvas>
+      <div class="atom-controls">
+        <button class="atom-btn active" onclick="selectAtom('H')">H · Водень</button>
+        <button class="atom-btn" onclick="selectAtom('Li')">Li · Літій</button>
+        <button class="atom-btn" onclick="selectAtom('O')">O · Кисень</button>
+        <button class="atom-btn" onclick="selectAtom('Si')">Si · Кремній</button>
+        <button class="atom-btn" onclick="selectAtom('Cu')">Cu · Мідь</button>
+      </div>
+      <div class="atom-info" id="atom-info">
+        <b>H · Водень</b> — атомний номер 1 · конфігурація: 1 · 1 протон, 1 електрон
+      </div>
+    </div>
+
+    <p class="prose"><strong>Ядро</strong> — розташоване в центрі атома. Складається з:</p>
+    <p class="prose" style="margin-left:16px; margin-top:8px;">
+      → <strong>Протони (p⁺)</strong> — мають позитивний заряд. Їх кількість = атомний номер елемента.<br>
+      → <strong>Нейтрони (n⁰)</strong> — не мають заряду. Стабілізують ядро.
+    </p>
+
+    <div class="callout key">
+      <div class="callout-label">Атомний номер</div>
+      <div class="callout-body">
+        Кількість протонів — це <strong>атомний номер</strong> і він <strong>визначає хімічний елемент</strong>.
+        H = 1 протон → елемент №1. O = 8 протонів → елемент №8.
+        Усі атоми одного елемента мають однакову кількість протонів, але можуть мати різну кількість нейтронів (ізотопи).
+      </div>
+    </div>
+
+    <p class="prose" style="margin-top:20px;">
+      <strong>Електронна оболонка</strong> — електрони рухаються навколо ядра по енергетичних рівнях.
+      Кожен рівень вміщує максимальну кількість електронів за формулою <code>2n²</code>:
+    </p>
+
+    <div class="tbl-wrap" style="margin-top:16px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Рівень</th>
+            <th>n</th>
+            <th>Макс. e⁻ (2n²)</th>
+            <th>Заповнення (Cu)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1-й</td>
+            <td>1</td>
+            <td><code>2</code></td>
+            <td><span class="badge full">2 / 2</span></td>
+          </tr>
+          <tr>
+            <td>2-й</td>
+            <td>2</td>
+            <td><code>8</code></td>
+            <td><span class="badge full">8 / 8</span></td>
+          </tr>
+          <tr>
+            <td>3-й</td>
+            <td>3</td>
+            <td><code>18</code></td>
+            <td><span class="badge full">18 / 18</span></td>
+          </tr>
+          <tr>
+            <td>4-й</td>
+            <td>4</td>
+            <td><code>32</code></td>
+            <td><span class="badge part">1 / 32</span></td>
+          </tr>
+          <tr>
+            <td>5-й+</td>
+            <td>5…</td>
+            <td><code>50…</code></td>
+            <td><span class="badge empty">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout inf">
+      <div class="callout-label">Правило заповнення</div>
+      <div class="callout-body">
+        Кожен наступний рівень починає заповнюватись <strong>тільки після</strong> того,
+        як попередній повністю заповнений. Виняток — перехідні метали (Cu, Fe, Ag…),
+        де останній рівень може мати лише 1 електрон навіть якщо передостанній не повний.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 03 ═══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03 —</span>
+      <span class="section-title">Іон</span>
+    </div>
+
+    <p class="prose">
+      <strong>Іон</strong> — це атом, який <em>втратив або приєднав</em> електрони,
+      і тому має електричний заряд. Нейтральний атом стає іоном при хімічних реакціях або
+      зовнішньому впливі (нагрівання, освітлення, напруга).
+    </p>
+
+    <div class="cards-2">
+      <div class="card cation">
+        <div class="card-eyebrow">Катіон (+)</div>
+        <div class="card-title">e⁻ → втрата</div>
+        <div class="card-body">
+          Атом <strong>віддав</strong> один або кілька електронів.
+          Протонів стало <em>більше</em>, ніж електронів → заряд позитивний.
+        </div>
+        <div class="card-example">
+          <b>Na → Na⁺</b><br>
+          Натрій (11p, 11e) втрачає 1e → (11p, 10e) = Na⁺
+        </div>
+      </div>
+      <div class="card anion">
+        <div class="card-eyebrow">Аніон (−)</div>
+        <div class="card-title">e⁻ → приєднання</div>
+        <div class="card-body">
+          Атом <strong>прийняв</strong> один або кілька електронів.
+          Електронів стало <em>більше</em>, ніж протонів → заряд негативний.
+        </div>
+        <div class="card-example">
+          <b>Cl → Cl⁻</b><br>
+          Хлор (17p, 17e) приймає 1e → (17p, 18e) = Cl⁻
+        </div>
+      </div>
+    </div>
+
+    <div class="callout key">
+      <div class="callout-label">Ключова ідея</div>
+      <div class="callout-body">
+        Ядро не змінюється — тільки кількість електронів. Зміна кількості електронів
+        змінює <strong>заряд</strong>, але не <strong>хімічний елемент</strong>.
+        Na⁺ — це все ще натрій, просто заряджений.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 04 ═══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04 —</span>
+      <span class="section-title">Валентність і провідність</span>
+    </div>
+
+    <p class="prose">
+      <strong>Валентність</strong> — здатність атома приєднувати або віддавати певну кількість
+      електронів у хімічних зв'язках. Електрони на <strong>останньому рівні</strong>
+      називають <strong>валентними</strong> — саме вони визначають хімічні та електричні властивості.
+    </p>
+
+    <!-- Conductivity bar chart -->
+    <div class="cond-bar-wrap">
+      <div class="cond-label">Електропровідність · порівняння</div>
+      <div class="cond-item">
+        <span class="cond-name" style="color:var(--green)">Cu · Провідник</span>
+        <div class="cond-track">
+          <div class="cond-fill" id="bar-cu" style="width:0%; background:var(--green)"></div>
+        </div>
+        <span class="cond-val" style="color:var(--green)">~6×10⁷ S/m</span>
+      </div>
+      <div class="cond-item">
+        <span class="cond-name" style="color:var(--yellow)">Si · Напівпровідник</span>
+        <div class="cond-track">
+          <div class="cond-fill" id="bar-si" style="width:0%; background:var(--yellow)"></div>
+        </div>
+        <span class="cond-val" style="color:var(--yellow)">~4×10⁻⁴ S/m</span>
+      </div>
+      <div class="cond-item">
+        <span class="cond-name" style="color:var(--red)">SiO₂ · Ізолятор</span>
+        <div class="cond-track">
+          <div class="cond-fill" id="bar-sio" style="width:0%; background:var(--red)"></div>
+        </div>
+        <span class="cond-val" style="color:var(--red)">~10⁻¹⁶ S/m</span>
+      </div>
+    </div>
+
+    <div class="cards-3">
+      <div class="card metal">
+        <div class="card-eyebrow">Провідник</div>
+        <div class="card-title">Мідь (Cu)</div>
+        <div class="card-body">
+          Порядковий номер 29. Валентних електронів — <strong>1</strong>.
+          Легко відривається від ядра, вільно переміщується по кристалічній решітці.
+        </div>
+        <div class="card-config">2 · 8 · 18 · <span style="color:var(--green)">1</span></div>
+      </div>
+      <div class="card semi">
+        <div class="card-eyebrow">Напівпровідник</div>
+        <div class="card-title">Кремній (Si)</div>
+        <div class="card-body">
+          Порядковий номер 14. Валентних електронів — <strong>4</strong>.
+          Провідність низька, але зростає при нагріванні або легуванні.
+        </div>
+        <div class="card-config">2 · 8 · <span style="color:var(--yellow)">4</span></div>
+      </div>
+      <div class="card insul">
+        <div class="card-eyebrow">Ізолятор</div>
+        <div class="card-title">Скло (SiO₂)</div>
+        <div class="card-body">
+          Валентні електрони <strong>міцно зв'язані</strong> з атомами.
+          Передати їх сусідньому атому практично неможливо. Провідність ≈ 0.
+        </div>
+        <div class="card-config" style="color:var(--red)">∞ band gap</div>
+      </div>
+    </div>
+
+    <p class="prose" style="margin-top: 20px;">
+      У <strong>провідниках</strong> валентні електрони настільки слабо зв'язані з ядром,
+      що сила їх взаємодії зі своїм ядром і з ядром сусіднього атома — однакова.
+      Тому вони вільно переміщуються по провіднику в хаотичному порядку.
+    </p>
+
+    <!-- Current animation -->
+    <div class="atom-wrap" id="current-wrap">
+      <div class="atom-label" id="current-label">Рух вільних електронів у провіднику</div>
+
+      <div class="atom-controls" style="margin-bottom:14px; justify-content:flex-start;">
+        <button class="atom-btn active" id="tab-free"    onclick="setMode('free')">⊙ Вільний стан</button>
+        <button class="atom-btn"        id="tab-voltage" onclick="setMode('voltage')">⚡ Під напругою</button>
+      </div>
+
+      <canvas id="current-canvas" width="780" height="220" style="display:block;width:100%;border-radius:4px;background:#0d0f11;"></canvas>
+
+      <div class="atom-info" id="current-info">
+        Електрони рухаються <b>хаотично</b> в усіх напрямках — теплові коливання.
+        Сумарний напрямок руху = 0. Струму немає.
+      </div>
+    </div>
+
+    <div class="callout wrn">
+      <div class="callout-label">Легування напівпровідників</div>
+      <div class="callout-body">
+        Чистий кремній — поганий провідник. Але якщо додати домішки з 3 або 5 валентними
+        електронами (бор, фосфор), провідність різко зростає. Так працюють
+        транзистори і мікросхеми: <strong>керована провідність</strong> через легування.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    // Конспект · Atom Fundamentals · Фізика / Хімія
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ── Atom data ──
+const ATOMS = {
+  H:  { name:'H · Водень',   num:1,  shells:[1],         protons:1,  neutrons:0,  color:'#7ab8f5' },
+  Li: { name:'Li · Літій',   num:3,  shells:[2,1],        protons:3,  neutrons:4,  color:'#f5a742' },
+  O:  { name:'O · Кисень',   num:8,  shells:[2,6],        protons:8,  neutrons:8,  color:'#5ac8fa' },
+  Si: { name:'Si · Кремній', num:14, shells:[2,8,4],      protons:14, neutrons:14, color:'#f0c84a' },
+  Cu: { name:'Cu · Мідь',    num:29, shells:[2,8,18,1],   protons:29, neutrons:35, color:'#e8884a' },
+};
+
+let currentAtom = 'H';
+let angles = [];
+let animFrame;
+
+const canvas = document.getElementById('atom-canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const cx = W/2, cy = H/2;
+
+function initAngles(shells) {
+  angles = shells.map(count => Array.from({length:count}, (_,i) => (i/count)*Math.PI*2));
+}
+
+function selectAtom(key) {
+  currentAtom = key;
+  const a = ATOMS[key];
+  initAngles(a.shells);
+  document.querySelectorAll('.atom-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.startsWith(key));
+  });
+  const config = a.shells.join(', ');
+  document.getElementById('atom-info').innerHTML =
+    `<b>${a.name}</b> — атомний номер ${a.num} · конфігурація: ${config} · ${a.protons} протонів, ${a.shells.reduce((s,c)=>s+c,0)} електронів`;
+}
+
+function drawAtom(timestamp) {
+  ctx.clearRect(0,0,W,H);
+  const a = ATOMS[currentAtom];
+  const speed = 0.0006;
+
+  // Orbit radii
+  const baseR = 36;
+  const step  = 34;
+  const radii = a.shells.map((_,i) => baseR + i*step);
+
+  // Draw orbits
+  a.shells.forEach((_,i) => {
+    ctx.beginPath();
+    ctx.arc(cx, cy, radii[i], 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Draw nucleus glow
+  const grad = ctx.createRadialGradient(cx,cy,0, cx,cy,22);
+  grad.addColorStop(0, 'rgba(74,158,255,0.5)');
+  grad.addColorStop(0.5, 'rgba(74,158,255,0.2)');
+  grad.addColorStop(1, 'rgba(74,158,255,0)');
+  ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2);
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Nucleus
+  ctx.beginPath(); ctx.arc(cx,cy,13,0,Math.PI*2);
+  ctx.fillStyle = '#1a2a3a';
+  ctx.strokeStyle = 'rgba(74,158,255,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.fill(); ctx.stroke();
+
+  // Nucleus label
+  ctx.fillStyle = '#7ab8f5';
+  ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(a.num + 'p', cx, cy);
+
+  // Draw electrons
+  a.shells.forEach((count, si) => {
+    const r = radii[si];
+    const shellSpeed = speed / (si + 1);
+    for (let ei = 0; ei < count; ei++) {
+      angles[si][ei] += shellSpeed * 16; // ~60fps approx
+      const ex = cx + r * Math.cos(angles[si][ei]);
+      const ey = cy + r * Math.sin(angles[si][ei]);
+
+      // Glow
+      const eg = ctx.createRadialGradient(ex,ey,0, ex,ey,6);
+      eg.addColorStop(0, a.color + 'cc');
+      eg.addColorStop(1, a.color + '00');
+      ctx.beginPath(); ctx.arc(ex,ey,6,0,Math.PI*2);
+      ctx.fillStyle = eg; ctx.fill();
+
+      // Dot
+      ctx.beginPath(); ctx.arc(ex,ey,3,0,Math.PI*2);
+      ctx.fillStyle = a.color;
+      ctx.fill();
+    }
+  });
+
+  animFrame = requestAnimationFrame(drawAtom);
+}
+
+// Conductivity bars animation
+function animBars() {
+  setTimeout(() => {
+    document.getElementById('bar-cu').style.width  = '96%';
+    document.getElementById('bar-si').style.width  = '28%';
+    document.getElementById('bar-sio').style.width = '4%';
+  }, 400);
+}
+
+// Init
+initAngles(ATOMS[currentAtom].shells);
+requestAnimationFrame(drawAtom);
+animBars();
+
+// ═══════════════════════════════════════════
+// ── Current / Voltage animation ──
+// ═══════════════════════════════════════════
+
+const cc   = document.getElementById('current-canvas');
+const cctx = cc.getContext('2d');
+
+// Physical canvas size (always drawn at 780×220)
+const CW = 780, CH = 220;
+
+// Lattice ions (Cu grid)
+const COLS = 9, ROWS = 3;
+const PAD  = 50;
+const ionColor = '#3a5a7a';
+const lattice  = [];
+for (let r = 0; r < ROWS; r++) {
+  for (let c = 0; c < COLS; c++) {
+    lattice.push({
+      x: PAD + c * ((CW - PAD * 2) / (COLS - 1)),
+      y: 42 + r * ((CH - 84) / (ROWS - 1)),
+    });
+  }
+}
+
+// Free electrons
+const N_ELECTRONS = 28;
+let electrons = [];
+let currentMode = 'free';   // 'free' | 'voltage'
+let voltageStrength = 0;    // 0..1 lerp
+
+function resetElectrons() {
+  electrons = Array.from({ length: N_ELECTRONS }, () => {
+    const angle = Math.random() * Math.PI * 2;
+    const spd   = 0.6 + Math.random() * 1.0;
+    return {
+      x:  PAD + Math.random() * (CW - PAD * 2),
+      y:  20  + Math.random() * (CH - 40),
+      vx: Math.cos(angle) * spd,
+      vy: Math.sin(angle) * spd,
+      trail: [],
+    };
+  });
+}
+
+resetElectrons();
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('tab-free').classList.toggle('active',    mode === 'free');
+  document.getElementById('tab-voltage').classList.toggle('active', mode === 'voltage');
+  document.getElementById('current-info').innerHTML = mode === 'free'
+    ? `Електрони рухаються <b>хаотично</b> в усіх напрямках — теплові коливання. Сумарний напрямок руху = 0. Струму немає.`
+    : `Напруга створює <b>різницю потенціалів</b>. Електрони дрейфують до <b style="color:#4a9eff">+</b> полюсу. Хаотичний рух залишається, але з'являється <b>дрейфова швидкість</b> → струм.`;
+}
+
+function drawCurrent(ts) {
+  cctx.clearRect(0, 0, CW, CH);
+
+  // Lerp voltage strength
+  const target = currentMode === 'voltage' ? 1 : 0;
+  voltageStrength += (target - voltageStrength) * 0.03;
+
+  // ── Background wire body ──
+  const wireGrad = cctx.createLinearGradient(0, 18, 0, CH - 18);
+  wireGrad.addColorStop(0,   '#131a22');
+  wireGrad.addColorStop(0.5, '#0f141a');
+  wireGrad.addColorStop(1,   '#131a22');
+  cctx.beginPath();
+  cctx.roundRect(18, 18, CW - 36, CH - 36, 8);
+  cctx.fillStyle = wireGrad;
+  cctx.fill();
+  cctx.strokeStyle = '#1e2a36';
+  cctx.lineWidth = 1;
+  cctx.stroke();
+
+  // ── Electric field glow (under voltage) ──
+  if (voltageStrength > 0.01) {
+    const fGrad = cctx.createLinearGradient(18, 0, CW - 18, 0);
+    fGrad.addColorStop(0,   `rgba(230,80,80,${0.12 * voltageStrength})`);
+    fGrad.addColorStop(0.5, `rgba(20,20,30,0)`);
+    fGrad.addColorStop(1,   `rgba(74,158,255,${0.12 * voltageStrength})`);
+    cctx.beginPath();
+    cctx.roundRect(18, 18, CW - 36, CH - 36, 8);
+    cctx.fillStyle = fGrad;
+    cctx.fill();
+
+    // Field arrows
+    const numArrows = 5;
+    for (let i = 0; i < numArrows; i++) {
+      const ax = 80 + i * ((CW - 160) / (numArrows - 1));
+      const ay = CH / 2;
+      const alpha = 0.18 * voltageStrength;
+      cctx.beginPath();
+      cctx.moveTo(ax - 18, ay);
+      cctx.lineTo(ax + 18, ay);
+      cctx.lineTo(ax + 10, ay - 7);
+      cctx.moveTo(ax + 18, ay);
+      cctx.lineTo(ax + 10, ay + 7);
+      cctx.strokeStyle = `rgba(120,180,255,${alpha})`;
+      cctx.lineWidth = 1.5;
+      cctx.stroke();
+    }
+  }
+
+  // ── Lattice ions ──
+  lattice.forEach(ion => {
+    // outer glow
+    const ig = cctx.createRadialGradient(ion.x, ion.y, 0, ion.x, ion.y, 12);
+    ig.addColorStop(0, 'rgba(58,100,140,0.4)');
+    ig.addColorStop(1, 'rgba(58,100,140,0)');
+    cctx.beginPath(); cctx.arc(ion.x, ion.y, 12, 0, Math.PI * 2);
+    cctx.fillStyle = ig; cctx.fill();
+
+    cctx.beginPath(); cctx.arc(ion.x, ion.y, 6, 0, Math.PI * 2);
+    cctx.fillStyle = '#1a2d40';
+    cctx.strokeStyle = '#2a5070';
+    cctx.lineWidth = 1.2;
+    cctx.fill(); cctx.stroke();
+
+    // Cu label
+    cctx.fillStyle = 'rgba(90,150,200,0.6)';
+    cctx.font = '7px JetBrains Mono, monospace';
+    cctx.textAlign = 'center';
+    cctx.textBaseline = 'middle';
+    cctx.fillText('Cu', ion.x, ion.y);
+  });
+
+  // ── Update + draw electrons ──
+  const driftX = 1.5 * voltageStrength;
+
+  electrons.forEach(e => {
+    // Save trail point
+    e.trail.push({ x: e.x, y: e.y });
+    if (e.trail.length > 12) e.trail.shift();
+
+    // Apply drift
+    e.x += e.vx + driftX;
+    e.y += e.vy;
+
+    // Bounce walls
+    if (e.x < 22)       { e.x = 22;       e.vx =  Math.abs(e.vx); }
+    if (e.x > CW - 22)  { e.x = CW - 22;  e.vx = -Math.abs(e.vx); }
+    if (e.y < 22)       { e.y = 22;        e.vy =  Math.abs(e.vy); }
+    if (e.y > CH - 22)  { e.y = CH - 22;   e.vy = -Math.abs(e.vy); }
+
+    // Under voltage: wrap x instead of bounce (stream through)
+    if (currentMode === 'voltage' && e.x > CW - 22) {
+      e.x = 22 + Math.random() * 10;
+      e.y = 22 + Math.random() * (CH - 44);
+      e.trail = [];
+    }
+
+    // Scatter off lattice ions randomly
+    if (Math.random() < 0.004) {
+      const angle = Math.random() * Math.PI * 2;
+      const spd   = 0.6 + Math.random() * 1.0;
+      e.vx = Math.cos(angle) * spd;
+      e.vy = Math.sin(angle) * spd;
+    }
+
+    // Draw trail
+    if (e.trail.length > 1) {
+      cctx.beginPath();
+      cctx.moveTo(e.trail[0].x, e.trail[0].y);
+      e.trail.forEach(p => cctx.lineTo(p.x, p.y));
+      const trailAlpha = 0.08 + 0.12 * voltageStrength;
+      cctx.strokeStyle = `rgba(74,158,255,${trailAlpha})`;
+      cctx.lineWidth = 1;
+      cctx.stroke();
+    }
+
+    // Electron glow
+    const eg = cctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, 7);
+    eg.addColorStop(0, 'rgba(74,158,255,0.7)');
+    eg.addColorStop(1, 'rgba(74,158,255,0)');
+    cctx.beginPath(); cctx.arc(e.x, e.y, 7, 0, Math.PI * 2);
+    cctx.fillStyle = eg; cctx.fill();
+
+    // Electron dot
+    cctx.beginPath(); cctx.arc(e.x, e.y, 2.8, 0, Math.PI * 2);
+    cctx.fillStyle = '#7ab8f5';
+    cctx.fill();
+  });
+
+  // ── Poles ──
+  if (voltageStrength > 0.01) {
+    const a = voltageStrength;
+
+    // minus (left)
+    cctx.fillStyle = `rgba(220,80,80,${a})`;
+    cctx.font = `bold 13px JetBrains Mono, monospace`;
+    cctx.textAlign = 'left';
+    cctx.textBaseline = 'middle';
+    cctx.fillText('−', 24, CH / 2);
+
+    // plus (right)
+    cctx.fillStyle = `rgba(74,158,255,${a})`;
+    cctx.textAlign = 'right';
+    cctx.fillText('+', CW - 24, CH / 2);
+
+    // Voltage label
+    cctx.fillStyle = `rgba(120,180,255,${a * 0.6})`;
+    cctx.font = `10px JetBrains Mono, monospace`;
+    cctx.textAlign = 'center';
+    cctx.fillText('E →', CW / 2, CH - 26);
+  }
+
+  // ── Mode label top-right ──
+  cctx.fillStyle = currentMode === 'voltage'
+    ? `rgba(74,158,255,0.5)`
+    : `rgba(100,120,140,0.4)`;
+  cctx.font = '10px JetBrains Mono, monospace';
+  cctx.textAlign = 'right';
+  cctx.textBaseline = 'top';
+  cctx.fillText(currentMode === 'voltage' ? 'СТРУМ ↗' : 'ХАОТИЧНИЙ РУХ', CW - 26, 26);
+
+  requestAnimationFrame(drawCurrent);
+}
+
+requestAnimationFrame(drawCurrent);
+</script>
+</body>
+</html>
